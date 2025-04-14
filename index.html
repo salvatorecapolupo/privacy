@@ -2,134 +2,135 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Dettagli Navigazione & Cookie</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <!-- Bootstrap 4.6 -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.0/css/bootstrap.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fingerprint Browser</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css">
   <style>
     body {
-      background-color: #f8f9fa;
+      background-color: black;
+      color: #00ff00;
       font-family: 'Courier New', monospace;
-      padding-top: 2rem;
+      padding: 20px;
     }
-    #output {
-      background-color: #212529;
-      color: #00ffcc;
-      padding: 1rem;
-      border-radius: 0.5rem;
-      white-space: pre-line;
-      font-size: 1rem;
-      min-height: 200px;
-    }
-    .blinking-cursor {
+    .typewriter {
+      overflow: hidden;
+      border-right: .15em solid #00ff00;
+      white-space: nowrap;
+      animation: typing 3s steps(40, end), blink-caret .75s step-end infinite;
       display: inline-block;
-      width: 10px;
-      background-color: #00ffcc;
-      animation: blink 1s step-start infinite;
+      font-size: 1.2rem;
     }
-    @keyframes blink {
-      50% { opacity: 0; }
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
     }
-    table {
-      font-family: 'Courier New', monospace;
+    @keyframes blink-caret {
+      from, to { border-color: transparent }
+      50% { border-color: #00ff00 }
+    }
+    .alt-row:nth-child(even) {
+      background-color: #003300;
+    }
+    .alt-row:nth-child(odd) {
+      background-color: #001a00;
+    }
+    #fingerprint {
+      font-size: 2rem;
+      color: #ff66cc;
+      word-break: break-all;
+      margin-top: 40px;
+      border-top: 2px solid #00ff00;
+      padding-top: 20px;
+      animation: typing 6s steps(60, end);
+    }
+    img {
+      max-width: 200px;
+      margin: 20px auto;
+      display: block;
     }
   </style>
 </head>
 <body>
+  <img src="qr-code-privacy.png" alt="QR Code Privacy">
+  <h1 class="text-center typewriter">Analisi Fingerprint del Tuo Browser</h1>
+  <div id="infoContainer" class="mt-4"></div>
+  <div id="fingerprint" class="text-center"></div>
 
-<div class="container text-center">
-  <h1 class="mb-4">Analisi della Navigazione</h1>
-
-  <!-- Immagine -->
-  <img src="inserisci_la_tua_immagine.jpg" alt="Immagine" class="img-fluid mb-4" style="max-height: 300px;">
-
-  <!-- Blocco Info Simulate -->
-  <div id="output" class="text-left mb-5"></div>
-
-  <!-- Tabella Cookie -->
-  <h3 class="mb-3">🍪 Cookie del Browser</h3>
-  <div class="table-responsive">
-    <table class="table table-bordered table-striped table-sm">
-      <thead class="thead-dark">
-        <tr>
-          <th scope="col">Nome</th>
-          <th scope="col">Valore</th>
-        </tr>
-      </thead>
-      <tbody id="cookieTableBody">
-        <!-- Cookie generati via JS -->
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<!-- Bootstrap & jQuery -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-  // Simulazione scrittura dati navigazione
-  const outputDiv = document.getElementById('output');
-
-  const infoList = [
-    `🧠 User-Agent: ${navigator.userAgent}`,
-    `🌐 Lingua: ${navigator.language}`,
-    `📡 Online: ${navigator.onLine}`,
-    `🕒 Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`,
-    `🧭 Piattaforma: ${navigator.platform}`,
-    `📱 Tipo dispositivo: ${/Mobi|Android/i.test(navigator.userAgent) ? "Mobile" : "Desktop"}`,
-    `🍪 Cookie abilitati: ${navigator.cookieEnabled}`,
-    `🔐 Do Not Track: ${navigator.doNotTrack || "non specificato"}`
-  ];
-
-  let index = 0;
-  let lineIndex = 0;
-
-  function typeLine() {
-    if (index >= infoList.length) return;
-
-    const currentLine = infoList[index];
-    if (lineIndex < currentLine.length) {
-      outputDiv.innerHTML += currentLine.charAt(lineIndex);
-      lineIndex++;
-      setTimeout(typeLine, 20); // Velocità scrittura
-    } else {
-      outputDiv.innerHTML += "\n";
-      index++;
-      lineIndex = 0;
-      setTimeout(typeLine, 400); // Pausa tra righe
+  <script>
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
     }
-  }
-
-  // Funzione per mostrare i cookie in tabella
-  function renderCookies() {
-    const tableBody = document.getElementById('cookieTableBody');
-    tableBody.innerHTML = '';
-
-    const cookieString = document.cookie;
-    if (!cookieString) {
-      const row = document.createElement('tr');
-      row.innerHTML = '<td colspan="2" class="text-center">Nessun cookie presente</td>';
-      tableBody.appendChild(row);
-      return;
+  
+    async function generateFingerprintHash(dataString) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(dataString);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      return hashHex;
     }
-
-    const cookies = cookieString.split('; ');
-    cookies.forEach(cookie => {
-      const [name, ...rest] = cookie.split('=');
-      const value = rest.join('=');
-      const row = document.createElement('tr');
-      row.innerHTML = `<td>${decodeURIComponent(name)}</td><td>${decodeURIComponent(value)}</td>`;
-      tableBody.appendChild(row);
-    });
-  }
-
-  // Avvio simulazione + cookie table
-  window.onload = () => {
-    typeLine();
-    renderCookies();
-  };
-</script>
-
+  
+    function getRawFingerprintData() {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      ctx.textBaseline = "top";
+      ctx.font = "14px 'Arial'";
+      ctx.fillStyle = "#f60";
+      ctx.fillRect(125,1,62,20);
+      ctx.fillStyle = "#069";
+      ctx.fillText("fingerprint!", 2, 15);
+      ctx.fillStyle = "rgba(102, 204, 0, 0.7)";
+      ctx.fillText("fingerprint!", 4, 17);
+      const canvasData = canvas.toDataURL();
+  
+      const data = [
+        navigator.userAgent,
+        screen.width + 'x' + screen.height,
+        navigator.language,
+        Intl.DateTimeFormat().resolvedOptions().timeZone,
+        navigator.platform,
+        navigator.hardwareConcurrency,
+        navigator.deviceMemory || 'N/A',
+        navigator.plugins.length,
+        canvasData,
+        navigator.maxTouchPoints
+      ];
+      return data;
+    }
+  
+    function generateTable(data) {
+      let table = '<table class="table table-bordered table-dark mt-3">';
+      table += '<thead><tr><th>Dato</th><th>Valore</th></tr></thead><tbody>';
+      data.forEach((item, index) => {
+        table += `<tr class="alt-row"><td>${item.key}</td><td>${item.value}</td></tr>`;
+      });
+      table += '</tbody></table>';
+      return table;
+    }
+  
+    async function showData() {
+      const container = document.getElementById('infoContainer');
+      const rawData = getRawFingerprintData();
+      const dataKeys = [
+        "User Agent", "Risoluzione Schermo", "Lingua", "Fuso Orario",
+        "Sistema", "CPU Logiche", "Memoria Dispositivo",
+        "Numero Plugin", "Canvas Signature", "Supporto Touch"
+      ];
+  
+      const dataObjects = rawData.map((val, i) => ({ key: dataKeys[i], value: val }));
+  
+      for (let i = 0; i < dataObjects.length; i++) {
+        container.innerHTML = generateTable(dataObjects.slice(0, i + 1));
+        await delay(200); // effetto scrittura graduale
+      }
+  
+      const hash = await generateFingerprintHash(rawData.join('||'));
+      await delay(1000);
+      document.getElementById("fingerprint").innerText = "Fingerprint (SHA-256):\n" + hash;
+    }
+  
+    showData();
+  </script>
+  
 </body>
 </html>

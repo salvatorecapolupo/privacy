@@ -2,65 +2,103 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Fingerprint Browser</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fingerprint & Privacy</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.0/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
-      background-color: black;
-      color: #00ff00;
-      font-family: 'Courier New', monospace;
-      padding: 20px;
+      background-color: #1c1c1c;
+      color: #fff;
+      font-family: 'Courier New', Courier, monospace;
+      padding-top: 50px;
     }
-    .typewriter {
-      overflow: hidden;
-      border-right: .15em solid #00ff00;
-      white-space: nowrap;
-      animation: typing 3s steps(40, end), blink-caret .75s step-end infinite;
-      display: inline-block;
-      font-size: 1.2rem;
+    h1 {
+      text-align: center;
+      font-size: 3em;
+      font-weight: bold;
     }
-    @keyframes typing {
-      from { width: 0 }
-      to { width: 100% }
+    .table th, .table td {
+      text-align: center;
     }
-    @keyframes blink-caret {
-      from, to { border-color: transparent }
-      50% { border-color: #00ff00 }
+    .table-responsive {
+      margin-top: 30px;
     }
-    .alt-row:nth-child(even) {
-      background-color: #003300;
+    .fingerprint {
+      position: relative;
+      width: 200px;
+      height: 300px;
+      border-radius: 100px / 150px;
+      background: transparent;
+      margin: 0 auto;
     }
-    .alt-row:nth-child(odd) {
-      background-color: #001a00;
+    .fingerprint .loop {
+      position: absolute;
+      border: 2px solid rgba(0,255,0,0.2);
+      border-radius: 100px / 150px;
+      width: 100%;
+      height: 100%;
+      animation: pulse 6s infinite ease-in-out;
     }
-    #fingerprint {
-      font-size: 2rem;
-      color: #ff66cc;
-      word-break: break-all;
-      margin-top: 40px;
-      border-top: 2px solid #00ff00;
-      padding-top: 20px;
-      animation: typing 6s steps(60, end);
+    .fingerprint .loop:nth-child(2) {
+      top: 5%;
+      left: 5%;
+      width: 90%;
+      height: 90%;
     }
-    img {
-      max-width: 200px;
-      margin: 20px auto;
-      display: block;
+    .fingerprint .loop:nth-child(3) {
+      top: 10%;
+      left: 10%;
+      width: 80%;
+      height: 80%;
+    }
+    .fingerprint .loop:nth-child(4) {
+      top: 15%;
+      left: 15%;
+      width: 70%;
+      height: 70%;
+    }
+    .fingerprint .loop:nth-child(5) {
+      top: 20%;
+      left: 20%;
+      width: 60%;
+      height: 60%;
+    }
+    @keyframes pulse {
+      0%, 100% { border-color: rgba(0,255,0,0.2); }
+      50% { border-color: rgba(0,255,0,0.5); }
+    }
+    .alt-row {
+      background-color: #333;
+    }
+    .text-break {
+      word-wrap: break-word;
     }
   </style>
 </head>
 <body>
-  <img src="https://salvatorecapolupo.github.io/privacy/qr-code-privacy.png" alt="QR Code Privacy">
-  <h1 class="text-center typewriter">Analisi Fingerprint del Tuo Browser</h1>
-  <div id="infoContainer" class="mt-4"></div>
-  <div id="fingerprint" class="text-center"></div>
+  <div class="container">
+    <h1>Privacy Fingerprint</h1>
+    <div class="d-flex justify-content-center">
+      <img src="qr-code-privacy.png" alt="Privacy QR Code" class="img-fluid">
+    </div>
+    <div id="infoContainer"></div>
+    <div id="fingerprint" class="mt-5"></div>
+    <div class="fingerprint-art mt-5 mb-5 d-flex justify-content-center">
+      <div class="fingerprint">
+        <div class="loop"></div>
+        <div class="loop"></div>
+        <div class="loop"></div>
+        <div class="loop"></div>
+        <div class="loop"></div>
+      </div>
+    </div>
+  </div>
 
   <script>
     function delay(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
     }
-  
+
     async function generateFingerprintHash(dataString) {
       const encoder = new TextEncoder();
       const data = encoder.encode(dataString);
@@ -69,7 +107,7 @@
       const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
       return hashHex;
     }
-  
+
     function getRawFingerprintData() {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
@@ -82,7 +120,7 @@
       ctx.fillStyle = "rgba(102, 204, 0, 0.7)";
       ctx.fillText("fingerprint!", 4, 17);
       const canvasData = canvas.toDataURL();
-  
+
       const data = [
         navigator.userAgent,
         screen.width + 'x' + screen.height,
@@ -97,17 +135,17 @@
       ];
       return data;
     }
-  
+
     function generateTable(data) {
-      let table = '<table class="table table-bordered table-dark mt-3">';
+      let table = '<div class="table-responsive"><table class="table table-bordered table-dark table-striped table-sm text-break">';
       table += '<thead><tr><th>Dato</th><th>Valore</th></tr></thead><tbody>';
-      data.forEach((item, index) => {
+      data.forEach(item => {
         table += `<tr class="alt-row"><td>${item.key}</td><td>${item.value}</td></tr>`;
       });
-      table += '</tbody></table>';
+      table += '</tbody></table></div>';
       return table;
     }
-  
+
     async function showData() {
       const container = document.getElementById('infoContainer');
       const rawData = getRawFingerprintData();
@@ -116,21 +154,23 @@
         "Sistema", "CPU Logiche", "Memoria Dispositivo",
         "Numero Plugin", "Canvas Signature", "Supporto Touch"
       ];
-  
+
       const dataObjects = rawData.map((val, i) => ({ key: dataKeys[i], value: val }));
-  
+
       for (let i = 0; i < dataObjects.length; i++) {
         container.innerHTML = generateTable(dataObjects.slice(0, i + 1));
         await delay(200); // effetto scrittura graduale
       }
-  
+
       const hash = await generateFingerprintHash(rawData.join('||'));
       await delay(1000);
       document.getElementById("fingerprint").innerText = "Fingerprint (SHA-256):\n" + hash;
     }
-  
+
     showData();
   </script>
-  
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

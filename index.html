@@ -6,14 +6,28 @@
   <title>Fingerprint & Privacy</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.0/css/bootstrap.min.css" rel="stylesheet">
   <style>
+    .table-responsive {
+  margin: 30px auto;
+  display: table;
+}
+
+.table {
+  margin: 0 auto;
+}
+
     body {
       background-color: #1c1c1c;
       color: #fff;
       font-family: 'Courier New', Courier, monospace;
       padding-top: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      flex-direction: column;
     }
     h1 {
-      text-align: center;
       font-size: 3em;
       font-weight: bold;
     }
@@ -23,80 +37,78 @@
     .table-responsive {
       margin-top: 30px;
     }
-    .fingerprint {
-      position: relative;
-      width: 200px;
-      height: 300px;
-      border-radius: 100px / 150px;
-      background: transparent;
-      margin: 0 auto;
-    }
-    .fingerprint .loop {
-      position: absolute;
-      border: 2px solid rgba(0,255,0,0.2);
-      border-radius: 100px / 150px;
-      width: 100%;
-      height: 100%;
-      animation: pulse 6s infinite ease-in-out;
-    }
-    .fingerprint .loop:nth-child(2) {
-      top: 5%;
-      left: 5%;
-      width: 90%;
-      height: 90%;
-    }
-    .fingerprint .loop:nth-child(3) {
-      top: 10%;
-      left: 10%;
-      width: 80%;
-      height: 80%;
-    }
-    .fingerprint .loop:nth-child(4) {
-      top: 15%;
-      left: 15%;
-      width: 70%;
-      height: 70%;
-    }
-    .fingerprint .loop:nth-child(5) {
-      top: 20%;
-      left: 20%;
-      width: 60%;
-      height: 60%;
-    }
-    @keyframes pulse {
-      0%, 100% { border-color: rgba(0,255,0,0.2); }
-      50% { border-color: rgba(0,255,0,0.5); }
-    }
     .alt-row {
       background-color: #333;
     }
     .text-break {
       word-wrap: break-word;
     }
+    .typing {
+      display: inline-block;
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 2px solid rgba(0, 255, 0, 0.5);
+      width: 0;
+      animation: typing 4s steps(40) 1s forwards, blink 0.75s step-end infinite;
+    }
+    .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    }
+
+    #fingerprint {
+        overflow-x: auto;
+        word-break: break-all;
+        font-size: 0.9rem;
+        padding: 1rem;
+        background-color: #2a2a2a;
+        border-radius: 10px;
+        margin-top: 2rem;
+        max-width: 100%;
+        width: 100%;
+    }
+
+
+    @keyframes typing {
+      100% {
+        width: 100%;
+      }
+    }
+    @keyframes blink {
+      50% {
+        border-color: transparent;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Privacy Fingerprint</h1>
-    <div class="d-flex justify-content-center">
-      <img src="qr-code-privacy.png" alt="Privacy QR Code" class="img-fluid">
-    </div>
+    <h1>Fingerprint & Privacy</h1>
+    <p>Questa pagina raccoglie e mostra alcuni dati relativi al tuo dispositivo, come il tuo agente utente, la risoluzione dello schermo, la lingua, il sistema operativo, e altri parametri. L'obiettivo è generare un'impronta digitale unica per il tuo dispositivo, utilizzando queste informazioni per creare un "fingerprint" (impronta digitale) che viene poi visualizzato in formato hash (SHA-256). Questo tipo di identificazione può essere utilizzato per scopi legati alla privacy e alla sicurezza online.</p>
     <div id="infoContainer"></div>
     <div id="fingerprint" class="mt-5"></div>
-    <div class="fingerprint-art mt-5 mb-5 d-flex justify-content-center">
-      <div class="fingerprint">
-        <div class="loop"></div>
-        <div class="loop"></div>
-        <div class="loop"></div>
-        <div class="loop"></div>
-        <div class="loop"></div>
-      </div>
-    </div>
   </div>
 
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+  
   <script>
     function delay(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // Lista di nomi da associare agli hash
+    const nameList = [
+        "Mario Rossi", "Giovanni Bianchi", "Luca Verdi", "Matteo Gialli", "Alessandro Neri",
+        "Francesco Blu", "Simone Grigi", "Andrea Lungi", "Giorgio Puri", "Paolo Cuori"
+    ];
+
+    // Funzione per generare un nome in base all'hash
+    function getNameFromHash(hash) {
+      const index = parseInt(hash.substring(0, 4), 16) % nameList.length; // prendi i primi 4 caratteri dell'hash e modificali
+      return nameList[index];
     }
 
     async function generateFingerprintHash(dataString) {
@@ -109,18 +121,6 @@
     }
 
     function getRawFingerprintData() {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      ctx.textBaseline = "top";
-      ctx.font = "14px 'Arial'";
-      ctx.fillStyle = "#f60";
-      ctx.fillRect(125,1,62,20);
-      ctx.fillStyle = "#069";
-      ctx.fillText("fingerprint!", 2, 15);
-      ctx.fillStyle = "rgba(102, 204, 0, 0.7)";
-      ctx.fillText("fingerprint!", 4, 17);
-      const canvasData = canvas.toDataURL();
-
       const data = [
         navigator.userAgent,
         screen.width + 'x' + screen.height,
@@ -130,7 +130,6 @@
         navigator.hardwareConcurrency,
         navigator.deviceMemory || 'N/A',
         navigator.plugins.length,
-        canvasData,
         navigator.maxTouchPoints
       ];
       return data;
@@ -152,25 +151,73 @@
       const dataKeys = [
         "User Agent", "Risoluzione Schermo", "Lingua", "Fuso Orario",
         "Sistema", "CPU Logiche", "Memoria Dispositivo",
-        "Numero Plugin", "Canvas Signature", "Supporto Touch"
+        "Numero Plugin", "Supporto Touch"
       ];
 
       const dataObjects = rawData.map((val, i) => ({ key: dataKeys[i], value: val }));
 
       for (let i = 0; i < dataObjects.length; i++) {
-        container.innerHTML = generateTable(dataObjects.slice(0, i + 1));
-        await delay(200); // effetto scrittura graduale
-      }
+//   container.innerHTML = generateTable(dataObjects.slice(0, i + 1));
 
-      const hash = await generateFingerprintHash(rawData.join('||'));
+  if (i === dataObjects.length - 1) {
+    const ua = navigator.userAgent;
+    const language = navigator.language;
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const screenRes = `${screen.width}x${screen.height}`;
+    const cores = navigator.hardwareConcurrency;
+    const deviceMemory = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : '(non disponibile)';
+    const touchSupport = navigator.maxTouchPoints > 0 ? 'supporta il touch' : 'non supporta il touch';
+
+    // Estrazione browser e OS semplici (senza AI, via regex base)
+    let browser = 'il tuo browser';
+    if (ua.includes("Chrome")) browser = "Chrome";
+    else if (ua.includes("Firefox")) browser = "Firefox";
+    else if (ua.includes("Safari") && !ua.includes("Chrome")) browser = "Safari";
+    else if (ua.includes("Edg")) browser = "Microsoft Edge";
+
+    let os = 'un sistema operativo sconosciuto';
+    if (ua.includes("Windows")) os = "Windows";
+    else if (ua.includes("Mac OS")) os = "macOS";
+    else if (ua.includes("Android")) os = "Android";
+    else if (ua.includes("Linux")) os = "Linux";
+    else if (ua.includes("iPhone") || ua.includes("iPad")) os = "iOS";
+
+    const description = `
+      <p class="font-weight-bold mt-4">
+        Ciao utente! Stai usando <span class="text-info">${browser}</span> su <span class="text-info">${os}</span>. 
+        La lingua del tuo dispositivo è impostata su <span class="text-warning">${language}</span>, 
+        ti trovi nel fuso orario <span class="text-success">${timezone}</span> 
+        e il tuo schermo ha una risoluzione di <span class="text-light">${screenRes}</span>. 
+        Il tuo dispositivo ha <span class="text-primary">${cores}</span> core logici, 
+        <span class="text-primary">${touchSupport}</span> e 
+        una memoria stimata di <span class="text-danger">${deviceMemory}</span>.
+      </p>`;
+      
+    container.innerHTML += description;
+  }
+
+  container.innerHTML = generateTable(dataObjects);
+
+
+  await delay(200);
+}
+
+
+
+      const deviceName = getNameFromHash("ae9496741c3236335d6e4b9e5513bd334bb1b8507d889be9801bdf814b822d9b"); // Genera un nome in base all'hash
+      const fingerprintString = `${deviceName} - ${rawData.join('||')}`;
+      const hash = await generateFingerprintHash(fingerprintString);
       await delay(1000);
-      document.getElementById("fingerprint").innerText = "Fingerprint (SHA-256):\n" + hash;
+      document.getElementById("fingerprint").innerHTML = `
+  <div><strong>Fingerprint (SHA-256):</strong></div>
+  <div class="text-monospace">${hash}</div>
+  <div class="mt-2"><strong>Nome dispositivo:</strong> ${deviceName}</div>
+`;
+
+      // document.getElementById("fingerprint").innerHTML = `<span class="typing123">Fingerprint (SHA-256):\n${hash}</span><br>Nome dispositivo: ${deviceName}`;
     }
 
     showData();
   </script>
-
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

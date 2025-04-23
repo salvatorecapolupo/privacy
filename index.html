@@ -203,19 +203,16 @@
   await delay(200);
 }
 
+const fingerprintString = rawData.join('||');
+const hash = await generateFingerprintHash(fingerprintString);
+const deviceName = getNameFromHash(hash); // Usa l'hash generato dinamicamente
 
-
-      const deviceName = getNameFromHash("ae9496741c3236335d6e4b9e5513bd334bb1b8507d889be9801bdf814b822d9b"); // Genera un nome in base all'hash
-      const fingerprintString = `${deviceName} - ${rawData.join('||')}`;
-      const hash = await generateFingerprintHash(fingerprintString);
-      await delay(1000);
-      document.getElementById("fingerprint").innerHTML = `
+await delay(1000);
+document.getElementById("fingerprint").innerHTML = `
   <div><strong>Fingerprint (SHA-256):</strong></div>
   <div class="text-monospace">${hash}</div>
   <div class="mt-2"><strong>Nome dispositivo:</strong> ${deviceName}</div>
 `;
-
-      // document.getElementById("fingerprint").innerHTML = `<span class="typing123">Fingerprint (SHA-256):\n${hash}</span><br>Nome dispositivo: ${deviceName}`;
     }
 
     showData();

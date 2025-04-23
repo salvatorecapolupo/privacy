@@ -85,9 +85,15 @@
 </head>
 <body>
   <div class="container">
-    <img src="//salvatorecapolupo.github.io/privacy/qr-code-privacy.png" class="img-fluid"/>
     <h1>Fingerprint & Privacy</h1>
-    <p>Questa pagina raccoglie e mostra alcuni dati relativi al tuo dispositivo, come il tuo agente utente, la risoluzione dello schermo, la lingua, il sistema operativo, e altri parametri. L'obiettivo è generare un'impronta digitale unica per il tuo dispositivo, utilizzando queste informazioni per creare un "fingerprint" (impronta digitale) che viene poi visualizzato in formato hash (SHA-256). Questo tipo di identificazione può essere utilizzato per scopi legati alla privacy e alla sicurezza online.</p>
+    <img src="//salvatorecapolupo.github.io/privacy/qr-code-privacy.png" class="img-fluid"/>
+    <p>Questa pagina raccoglie e mostra alcuni dati relativi al tuo dispositivo, 
+      come il tuo agente utente, la risoluzione dello schermo, la lingua, il sistema operativo, 
+      e altri parametri. L'obiettivo è generare un'impronta digitale unica per il tuo dispositivo, 
+      utilizzando queste informazioni per creare un "fingerprint" (impronta digitale) che viene poi 
+      visualizzato in formato hash (SHA-256). Questo tipo di identificazione può essere utilizzato 
+      per scopi legati alla privacy e alla sicurezza online, oppure all'identificazione dell'utente
+      a scopo di marketing e profilazione.</p>
     <div id="infoContainer"></div>
     <div id="fingerprint" class="mt-5"></div>
   </div>
@@ -102,9 +108,28 @@
 
     // Lista di nomi da associare agli hash
     const nameList = [
-        "Mario Rossi", "Giovanni Bianchi", "Luca Verdi", "Matteo Gialli", "Alessandro Neri",
-        "Francesco Blu", "Simone Grigi", "Andrea Lungi", "Giorgio Puri", "Paolo Cuori"
+      "Mario Rossi", "Giovanni Bianchi", "Luca Verdi", "Matteo Gialli", "Alessandro Neri",
+      "Francesco Blu", "Simone Grigi", "Andrea Lungi", "Giorgio Puri", "Paolo Cuori",
+      "Chiara Rosa", "Elena Fonti", "Sara Moretti", "Giulia Fiumi", "Valentina Costa",
+      "Roberto Mare", "Claudio Nebbia", "Martina Vento", "Federico Bosco", "Irene Sole",
+      "Antonio Lago", "Stefano Terni", "Laura Fabbri", "Davide Lupo", "Nicola Ferro",
+      "Rita Silvestri", "Edoardo Valli", "Lucia Serra", "Marco Fiori", "Angela Sabbia",
+      "Massimo Querce", "Beatrice Monti", "Daniele Bianco", "Cristina Falchi", "Tommaso Sera",
+      "Gabriele Notte", "Veronica Bruni", "Sandro Pietra", "Michela Bosco", "Leonardo Freddi",
+      "Alina Pozzi", "Riccardo Rami", "Serena Fiore", "Vittorio Neri", "Flavia Colle",
+      "Giovanna Maretti", "Lorenzo Greco", "Silvia Passi", "Pietro Vallesi", "Daniela Lodi",
+      "Stefania Rami", "Giada Morello", "Fabio Costa", "Eleonora Stasi", "Maurizio Sabbioni",
+      "Noemi Vento", "Dario D’Alba", "Alessia Corsi", "Cristian Lodi", "Vanessa Luce",
+      "Manuel Serra", "Franca Basile", "Giacomo Fabbro", "Nadia Montesi", "Samuele Argento",
+      "Isabella Cerri", "Luca Ombra", "Martina Rami", "Davide Ferro", "Ilaria Notari",
+      "Enrico Pini", "Claudia Celesti", "Renato Bruni", "Monica Galli", "Luciano Volpe",
+      "Caterina Mura", "Emanuele Testa", "Elisabetta Greco", "Giulio Marchetti", "Rebecca Zeni",
+      "Christian Bosco", "Antonella Valli", "Matilde Neri", "Fabiana Corti", "Lorenza Blasi",
+      "Sebastiano Morelli", "Giuseppina Lupo", "Tiziano Fiori", "Alessandro Rocchi", "Patrizia Santi",
+      "Camilla Lodi", "Filippo Quinto", "Miriam Puglisi", "Vincenzo Calvi", "Teresa Neri",
+      "Giancarlo Tasso", "Marcella Sordi", "Omar Casati", "Carla Terni", "Lucio Fontana"
     ];
+
 
     // Funzione per generare un nome in base all'hash
     function getNameFromHash(hash) {

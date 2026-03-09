@@ -1,246 +1,139 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fingerprint & Privacy</title>
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.0/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    .table-responsive {
-  margin: 30px auto;
-  display: table;
-}
-
-.table {
-  margin: 0 auto;
-}
-
-    body {
-      background-color: #1c1c1c;
-      color: #fff;
-      font-family: 'Courier New', Courier, monospace;
-      padding-top: 50px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      text-align: center;
-      flex-direction: column;
-    }
-    h1 {
-      font-size: 3em;
-      font-weight: bold;
-    }
-    .table th, .table td {
-      text-align: center;
-    }
-    .table-responsive {
-      margin-top: 30px;
-    }
-    .alt-row {
-      background-color: #333;
-    }
-    .text-break {
-      word-wrap: break-word;
-    }
-    .typing {
-      display: inline-block;
-      overflow: hidden;
-      white-space: nowrap;
-      border-right: 2px solid rgba(0, 255, 0, 0.5);
-      width: 0;
-      animation: typing 4s steps(40) 1s forwards, blink 0.75s step-end infinite;
-    }
-    .container {
-    padding-left: 2rem;
-    padding-right: 2rem;
-    max-width: 1000px;
-    margin: 0 auto;
-    }
-
-    #fingerprint {
-        overflow-x: auto;
-        word-break: break-all;
-        font-size: 0.9rem;
-        padding: 1rem;
-        background-color: #2a2a2a;
-        border-radius: 10px;
-        margin-top: 2rem;
-        max-width: 100%;
-        width: 100%;
-    }
-
-
-    @keyframes typing {
-      100% {
-        width: 100%;
-      }
-    }
-    @keyframes blink {
-      50% {
-        border-color: transparent;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Checker Pro</title>
+    <style>
+        :root { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --accent: #38bdf8; }
+        body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { max-width: 800px; width: 100%; }
+        .card { background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px #000; margin-bottom: 20px; }
+        h1 { color: var(--accent); font-size: 1.5rem; margin-top: 0; }
+        .identity { font-size: 1.2rem; font-weight: bold; color: var(--accent); border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 15px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
+        .data-point { font-size: 0.85rem; }
+        .label { color: #94a3b8; display: block; margin-bottom: 2px; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.5px; }
+        .value { word-break: break-all; font-family: monospace; }
+        .cookie-footer { border-top: 1px solid #334155; padding-top: 15px; font-size: 0.8rem; color: #cbd5e1; }
+        .tag { background: #334155; padding: 2px 6px; border-radius: 4px; margin-right: 5px; display: inline-block; margin-bottom: 5px; }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Fingerprint & Privacy</h1>
-    <img src="//salvatorecapolupo.github.io/privacy/qr-code-privacy.png" class="img-fluid"/>
-    <p>Questa pagina raccoglie e mostra alcuni dati relativi al tuo dispositivo, 
-      come il tuo agente utente, la risoluzione dello schermo, la lingua, il sistema operativo, 
-      e altri parametri. L'obiettivo è generare un'impronta digitale unica per il tuo dispositivo, 
-      utilizzando queste informazioni per creare un "fingerprint" (impronta digitale) che viene poi 
-      visualizzato in formato hash (SHA-256). Questo tipo di identificazione può essere utilizzato 
-      per scopi legati alla privacy e alla sicurezza online, oppure all'identificazione dell'utente
-      a scopo di marketing e profilazione.</p>
-    <div id="infoContainer"></div>
-    <div id="fingerprint" class="mt-5"></div>
-  </div>
 
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
-  
-  <script>
-    function delay(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
+<div class="container">
+    <div class="card">
+        <h1>Identità Digitale Rilevata</h1>
+        <div id="user-alias" class="identity">Generazione alias...</div>
+        
+        <div class="grid" id="privacy-data">
+            </div>
+    </div>
 
-    // Lista di nomi da associare agli hash
-    const nameList = [
-      "Mario Rossi", "Giovanni Bianchi", "Luca Verdi", "Matteo Gialli", "Alessandro Neri",
-      "Francesco Blu", "Simone Grigi", "Andrea Lungi", "Giorgio Puri", "Paolo Cuori",
-      "Chiara Rosa", "Elena Fonti", "Sara Moretti", "Giulia Fiumi", "Valentina Costa",
-      "Roberto Mare", "Claudio Nebbia", "Martina Vento", "Federico Bosco", "Irene Sole",
-      "Antonio Lago", "Stefano Terni", "Laura Fabbri", "Davide Lupo", "Nicola Ferro",
-      "Rita Silvestri", "Edoardo Valli", "Lucia Serra", "Marco Fiori", "Angela Sabbia",
-      "Massimo Querce", "Beatrice Monti", "Daniele Bianco", "Cristina Falchi", "Tommaso Sera",
-      "Gabriele Notte", "Veronica Bruni", "Sandro Pietra", "Michela Bosco", "Leonardo Freddi",
-      "Alina Pozzi", "Riccardo Rami", "Serena Fiore", "Vittorio Neri", "Flavia Colle",
-      "Giovanna Maretti", "Lorenzo Greco", "Silvia Passi", "Pietro Vallesi", "Daniela Lodi",
-      "Stefania Rami", "Giada Morello", "Fabio Costa", "Eleonora Stasi", "Maurizio Sabbioni",
-      "Noemi Vento", "Dario D’Alba", "Alessia Corsi", "Cristian Lodi", "Vanessa Luce",
-      "Manuel Serra", "Franca Basile", "Giacomo Fabbro", "Nadia Montesi", "Samuele Argento",
-      "Isabella Cerri", "Luca Ombra", "Martina Rami", "Davide Ferro", "Ilaria Notari",
-      "Enrico Pini", "Claudia Celesti", "Renato Bruni", "Monica Galli", "Luciano Volpe",
-      "Caterina Mura", "Emanuele Testa", "Elisabetta Greco", "Giulio Marchetti", "Rebecca Zeni",
-      "Christian Bosco", "Antonella Valli", "Matilde Neri", "Fabiana Corti", "Lorenza Blasi",
-      "Sebastiano Morelli", "Giuseppina Lupo", "Tiziano Fiori", "Alessandro Rocchi", "Patrizia Santi",
-      "Camilla Lodi", "Filippo Quinto", "Miriam Puglisi", "Vincenzo Calvi", "Teresa Neri",
-      "Giancarlo Tasso", "Marcella Sordi", "Omar Casati", "Carla Terni", "Lucio Fontana"
-    ];
+    <div class="card">
+        <div class="cookie-footer">
+            <strong>Tracce di navigazione e Tracker rilevati:</strong><br><br>
+            <div id="cookie-list">Analisi dei cookie e dei servizi attivi...</div>
+        </div>
+    </div>
+</div>
 
+<script>
+    (function() {
+        // --- 1. MECCANISMO DI ASSEGNAZIONE NOMI (HASH-BASED) ---
+        function generateIdentity(fingerprint) {
+            const adjectives = ["Rapido", "Siderale", "Etereo", "Furtivo", "Criptico", "Vigile", "Arguto"];
+            const nouns = ["Leone", "Codice", "Nervo", "Falcon", "Bit", "Proxy", "Nexus"];
+            let hash = 0;
+            for (let i = 0; i < fingerprint.length; i++) {
+                hash = ((hash << 5) - hash) + fingerprint.charCodeAt(i);
+                hash |= 0;
+            }
+            const absHash = Math.abs(hash);
+            const adj = adjectives[absHash % adjectives.length];
+            const noun = nouns[(absHash >> 2) % nouns.length];
+            const num = absHash % 100;
+            return `${adj}-${noun}-${num}`;
+        }
 
-    // Funzione per generare un nome in base all'hash
-    function getNameFromHash(hash) {
-      const index = parseInt(hash.substring(0, 4), 16) % nameList.length; // prendi i primi 4 caratteri dell'hash e modificali
-      return nameList[index];
-    }
+        // --- 2. RACCOLTA DATI ESTESA ---
+        async function collectData() {
+            const gl = document.createElement('canvas').getContext('webgl');
+            const debugInfo = gl ? gl.getExtension('WEBGL_debug_renderer_info') : null;
+            
+            const data = {
+                "User Agent": navigator.userAgent,
+                "Risoluzione": `${screen.width}x${screen.height} (${window.devicePixelRatio}x)`,
+                "Lingua": navigator.language,
+                "Piattaforma": navigator.platform,
+                "Core CPU": navigator.hardwareConcurrency || "N/D",
+                "RAM stimata": navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "N/D",
+                "Timezone": Intm.DateTimeFormat().resolvedOptions().timeZone,
+                "Touch Support": ('ontouchstart' in window) ? "Sì" : "No",
+                "Do Not Track": navigator.doNotTrack === "1" ? "Attivo" : "Non attivo",
+                "GPU": debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : "N/D",
+                "Cookie Abilitati": navigator.cookieEnabled ? "Sì" : "No"
+            };
 
-    async function generateFingerprintHash(dataString) {
-      const encoder = new TextEncoder();
-      const data = encoder.encode(dataString);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-      return hashHex;
-    }
+            // Canvas Fingerprinting (sommario)
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillText("PrivacyCheck", 10, 10);
+            const canvasHash = canvas.toDataURL().substring(30, 50);
+            data["Canvas ID"] = canvasHash;
 
-    function getRawFingerprintData() {
-      const data = [
-        navigator.userAgent,
-        screen.width + 'x' + screen.height,
-        navigator.language,
-        Intl.DateTimeFormat().resolvedOptions().timeZone,
-        navigator.platform,
-        navigator.hardwareConcurrency,
-        navigator.deviceMemory || 'N/A',
-        navigator.plugins.length,
-        navigator.maxTouchPoints
-      ];
-      return data;
-    }
+            return data;
+        }
 
-    function generateTable(data) {
-      let table = '<div class="table-responsive"><table class="table table-bordered table-dark table-striped table-sm text-break">';
-      table += '<thead><tr><th>Dato</th><th>Valore</th></tr></thead><tbody>';
-      data.forEach(item => {
-        table += `<tr class="alt-row"><td>${item.key}</td><td>${item.value}</td></tr>`;
-      });
-      table += '</tbody></table></div>';
-      return table;
-    }
+        // --- 3. ANALISI COOKIE E TRACKER ---
+        function analyzeTrackers() {
+            const cookies = document.cookie.split(';');
+            const found = [];
+            
+            // Simulazione rilevamento tramite check di oggetti globali comuni (History Sniffing moderna)
+            const detectors = {
+                "Facebook/Meta": () => window.fbq || window.FB,
+                "Google Analytics": () => window.ga || window.gtag,
+                "Google Ads": () => window.google_ad_client,
+                "Twitter/X": () => window.twttr,
+                "LinkedIn": () => window.lintrk,
+                "TikTok": () => window.ttq
+            };
 
-    async function showData() {
-      const container = document.getElementById('infoContainer');
-      const rawData = getRawFingerprintData();
-      const dataKeys = [
-        "User Agent", "Risoluzione Schermo", "Lingua", "Fuso Orario",
-        "Sistema", "CPU Logiche", "Memoria Dispositivo",
-        "Numero Plugin", "Supporto Touch"
-      ];
+            for (let [name, check] of Object.entries(detectors)) {
+                if (check()) found.push(name);
+            }
 
-      const dataObjects = rawData.map((val, i) => ({ key: dataKeys[i], value: val }));
+            // Aggiunta cookie locali
+            if (cookies[0] !== "") {
+                cookies.forEach(c => found.push(`Cookie: ${c.split('=')[0].trim()}`));
+            }
 
-      for (let i = 0; i < dataObjects.length; i++) {
-//   container.innerHTML = generateTable(dataObjects.slice(0, i + 1));
+            if (found.length === 0) return "Nessun cookie di terze parti leggibile direttamente. Il browser sta proteggendo la tua cronologia.";
+            return found.map(f => `<span class="tag">${f}</span>`).join(", ");
+        }
 
-  if (i === dataObjects.length - 1) {
-    const ua = navigator.userAgent;
-    const language = navigator.language;
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const screenRes = `${screen.width}x${screen.height}`;
-    const cores = navigator.hardwareConcurrency;
-    const deviceMemory = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : '(non disponibile)';
-    const touchSupport = navigator.maxTouchPoints > 0 ? 'supporta il touch' : 'non supporta il touch';
+        // --- RENDER ---
+        async function init() {
+            const data = await collectData();
+            const fingerprintString = data["User Agent"] + data["Risoluzione"] + data["GPU"];
+            
+            document.getElementById('user-alias').innerText = generateIdentity(fingerprintString);
+            
+            const grid = document.getElementById('privacy-data');
+            grid.innerHTML = Object.entries(data).map(([label, value]) => `
+                <div class="data-point">
+                    <span class="label">${label}</span>
+                    <span class="value">${value}</span>
+                </div>
+            `).join('');
 
-    // Estrazione browser e OS semplici (senza AI, via regex base)
-    let browser = 'il tuo browser';
-    if (ua.includes("Chrome")) browser = "Chrome";
-    else if (ua.includes("Firefox")) browser = "Firefox";
-    else if (ua.includes("Safari") && !ua.includes("Chrome")) browser = "Safari";
-    else if (ua.includes("Edg")) browser = "Microsoft Edge";
+            document.getElementById('cookie-list').innerHTML = analyzeTrackers();
+        }
 
-    let os = 'un sistema operativo sconosciuto';
-    if (ua.includes("Windows")) os = "Windows";
-    else if (ua.includes("Mac OS")) os = "macOS";
-    else if (ua.includes("Android")) os = "Android";
-    else if (ua.includes("Linux")) os = "Linux";
-    else if (ua.includes("iPhone") || ua.includes("iPad")) os = "iOS";
+        init();
+    })();
+</script>
 
-    const description = `
-      <p class="font-weight-bold mt-4">
-        Ciao utente! Stai usando <span class="text-info">${browser}</span> su <span class="text-info">${os}</span>. 
-        La lingua del tuo dispositivo è impostata su <span class="text-warning">${language}</span>, 
-        ti trovi nel fuso orario <span class="text-success">${timezone}</span> 
-        e il tuo schermo ha una risoluzione di <span class="text-light">${screenRes}</span>. 
-        Il tuo dispositivo ha <span class="text-primary">${cores}</span> core logici, 
-        <span class="text-primary">${touchSupport}</span> e 
-        una memoria stimata di <span class="text-danger">${deviceMemory}</span>.
-      </p>`;
-      
-    container.innerHTML += description;
-  }
-
-  container.innerHTML = generateTable(dataObjects);
-
-
-  await delay(200);
-}
-
-const fingerprintString = rawData.join('||');
-const hash = await generateFingerprintHash(fingerprintString);
-const deviceName = getNameFromHash(hash); // Usa l'hash generato dinamicamente
-
-await delay(1000);
-document.getElementById("fingerprint").innerHTML = `
-  <div><strong>Fingerprint (SHA-256):</strong></div>
-  <div class="text-monospace">${hash}</div>
-  <div class="mt-2"><strong>Nome dispositivo:</strong> ${deviceName}</div>
-`;
-    }
-
-    showData();
-  </script>
 </body>
 </html>

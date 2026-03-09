@@ -3,134 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TERMINAL PRIVACY SENSOR</title>
+    <title>PRIVACY SENSOR SOTA</title>
     <style>
-        :root { --neon: #00ff41; --bg: #050505; --warn: #ff3e3e; --low: #38bdf8; }
-        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; margin: 0; padding: 20px; text-transform: uppercase; }
-        .container { max-width: 1000px; margin: 0 auto; border: 1px solid var(--neon); padding: 20px; box-shadow: 0 0 15px rgba(0, 255, 65, 0.2); }
+        :root { --neon: #00ff41; --bg: #050505; --warn: #ff3e3e; --info: #38bdf8; }
+        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; margin: 0; padding: 15px; font-size: 14px; }
+        .container { max-width: 900px; margin: 0 auto; border: 1px solid var(--neon); padding: 20px; box-shadow: 0 0 20px rgba(0,255,65,0.1); }
         
-        header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; border-bottom: 1px dashed var(--neon); padding-bottom: 20px; }
-        .glitch { font-size: 1.5rem; font-weight: bold; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
-
-        .qr-area { background: #fff; padding: 10px; border: 4px double var(--neon); }
+        /* Header */
+        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--neon); padding-bottom: 15px; margin-bottom: 20px; }
+        .identity-box h1 { margin: 0; font-size: 1.2rem; opacity: 0.8; }
+        #user-alias { font-size: 2rem; font-weight: bold; text-shadow: 0 0 10px var(--neon); }
         
-        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.85rem; }
-        th, td { border: 1px solid rgba(0, 255, 65, 0.3); padding: 12px; text-align: left; }
-        th { color: var(--bg); background: var(--neon); font-weight: bold; width: 30%; }
-        .risk-high { color: var(--warn); font-weight: bold; }
-        .risk-low { color: var(--low); }
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
+        th, td { border: 1px solid rgba(0, 255, 65, 0.2); padding: 10px; text-align: left; }
+        th { background: rgba(0, 255, 65, 0.1); color: var(--neon); text-transform: uppercase; font-size: 0.75rem; }
+        .risk-high { color: var(--warn); }
+        .risk-med { color: orange; }
+        .risk-low { color: var(--info); }
 
-        .scan-line { width: 100%; height: 2px; background: var(--neon); position: fixed; top: 0; left: 0; opacity: 0.1; pointer-events: none; animation: scan 4s linear infinite; }
-        @keyframes scan { from { top: 0; } to { top: 100vh; } }
-
-        .cookie-vault { background: rgba(255, 62, 62, 0.05); border: 1px solid var(--warn); padding: 15px; margin-top: 20px; }
-        .cookie-vault h3 { color: var(--warn); margin-top: 0; font-size: 0.9rem; }
-        #cookie-list { color: #ccc; font-size: 0.8rem; letter-spacing: 1px; line-height: 1.5; }
-        .tag { border: 1px solid #555; padding: 2px 5px; margin-right: 5px; display: inline-block; margin-bottom: 5px; }
+        /* Footprint Section */
+        .panel { border: 1px solid var(--neon); padding: 15px; background: rgba(0,0,0,0.5); margin-bottom: 20px; }
+        .panel h3 { margin-top: 0; color: var(--info); font-size: 0.9rem; border-bottom: 1px solid var(--info); display: inline-block; }
+        .tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .tag { border: 1px solid var(--neon); padding: 3px 8px; font-size: 0.75rem; border-radius: 3px; }
+        
+        .explanation { font-size: 0.7rem; color: #888; margin-top: 10px; text-transform: none; line-height: 1.4; }
+        
+        @media (max-width: 600px) { th { display: none; } td { display: block; width: 100%; box-sizing: border-box; } }
     </style>
 </head>
 <body>
 
-<div class="scan-line"></div>
-
 <div class="container">
     <header>
-        <div>
-            <div class="glitch">[ ANALISI IMPRONTA DIGITALE ]</div>
-            <div style="font-size: 2.5rem;" id="user-alias">...CALCOLO...</div>
-            <div id="ip-display" style="margin-top: 10px; color: var(--low);">IP: INTERCEPTING...</div>
+        <div class="identity-box">
+            <h1>DIGITAL_SHADOW_ID:</h1>
+            <div id="user-alias">CALCOLO...</div>
         </div>
-        <div class="qr-area">
-            <img id="qr-img" src="" alt="Session ID" style="width: 100px; height: 100px;">
+        <div id="qr-container">
+            <img id="qr-img" src="" alt="QR" style="width: 80px; height: 80px; border: 2px solid #fff;">
         </div>
     </header>
 
-    <table id="data-table">
+    <table>
         <thead>
             <tr>
-                <th>SENSORE</th>
-                <th>VALORE INTERCETTATO</th>
-                <th>LIVELLO RISCHIO</th>
+                <th>Sensore</th>
+                <th>Valore Rilevato</th>
+                <th>Rischio</th>
+                <th>Perché?</th>
             </tr>
         </thead>
-        <tbody id="data-body">
+        <tbody id="sensor-table">
             </tbody>
     </table>
 
-    <div class="cookie-vault">
-        <h3>TRACCE DI NAVIGAZIONE E IDENTIFICATORI RILEVATI:</h3>
-        <div id="cookie-list">Sincronizzazione con il database dei tracker...</div>
+    <div class="panel">
+        <h3>SOCIAL_FOOTPRINT_ANALYSIS</h3>
+        <div class="explanation">
+            Tentativo di rilevamento servizi attivi tramite "Resource Timing" e "Global Object Sniffing". 
+            I siti che visiti lasciano tracce nel browser che JS può intercettare.
+        </div>
+        <div id="social-tags" class="tag-list">Analisi impronte digitali...</div>
+    </div>
+
+    <div class="panel">
+        <h3>LOCATION_ZONE_LEAK: <span id="tz-val" style="color:#fff">...</span></h3>
+        <div class="explanation">
+            <strong>Cos'è:</strong> Anche senza GPS, il tuo browser rivela il fuso orario configurato (es. `Europe/Rome`). 
+            Questo permette di localizzarti geograficamente con un errore minimo, bypassando i blocchi privacy della posizione.
+        </div>
     </div>
 </div>
 
 <script>
     (function() {
-        const adjectives = ["SILENT", "VOID", "DARK", "NEON", "CYBER", "GHOST", "NULL"];
-        const nouns = ["SPECTRE", "NODE", "PULSE", "REAPER", "DAEMON", "PROXY", "BIT"];
+        const sensors = [
+            { id: "ua", label: "User Agent", risk: "ALTO", desc: "Svela versione OS e Browser esatta." },
+            { id: "gpu", label: "Renderer GPU", risk: "ALTO", desc: "Univoco per combinazione hardware/driver." },
+            { id: "ip", label: "Public IP", risk: "MEDIO", desc: "Localizzazione tramite provider rete." },
+            { id: "cores", label: "CPU Cores", risk: "BASSO", desc: "Dato hardware generico." },
+            { id: "mem", label: "RAM (Stima)", risk: "BASSO", desc: "Capacità di calcolo del sistema." },
+            { id: "scr", label: "Display Res", risk: "MEDIO", desc: "Risoluzione e ratio dello schermo." }
+        ];
 
-        function generateAlias(str) {
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) { hash = ((hash << 5) - hash) + str.charCodeAt(i); hash |= 0; }
-            const h = Math.abs(hash);
-            return `${adjectives[h % adjectives.length]}_${nouns[(h >> 2) % nouns.length]}_${h % 99}`;
-        }
-
-        async function probe() {
+        async function init() {
             const gl = document.createElement('canvas').getContext('webgl');
-            const debugInfo = gl ? gl.getExtension('WEBGL_debug_renderer_info') : null;
-            const gpu = debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : "HIDDEN";
-            
-            // Verifica AdBlock (metodo euristico)
-            let adBlockActive = false;
-            try { await fetch(new Request('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js', { mode: 'no-cors' })); } 
-            catch (e) { adBlockActive = true; }
+            const dbg = gl ? gl.getExtension('WEBGL_debug_renderer_info') : null;
+            const gpu = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : "Protetta/N.D.";
+            const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-            const sensorData = [
-                { s: "User Agent", v: navigator.userAgent, r: "ALTO" },
-                { s: "GPU Vendor", v: gpu, r: "MEDIO" },
-                { s: "Core Logici", v: navigator.hardwareConcurrency || "N/D", r: "BASSO" },
-                { s: "RAM (Stima)", v: navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "N/D", r: "BASSO" },
-                { s: "Risoluzione", v: `${screen.width}x${screen.height}`, r: "MEDIO" },
-                { s: "Lingua", v: navigator.language, r: "BASSO" },
-                { s: "AdBlocker", v: adBlockActive ? "ATTIVO" : "NON RILEVATO", r: adBlockActive ? "BASSO" : "ALTO" },
-                { s: "Incognito", v: (navigator.storage && navigator.storage.estimate) ? "PROBABILE NO" : "RILEVATO", r: "ALTO" }
-            ];
+            const values = {
+                ua: navigator.userAgent,
+                gpu: gpu,
+                ip: "Intercettazione...",
+                cores: navigator.hardwareConcurrency || "N/D",
+                mem: navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "N/D",
+                scr: `${screen.width}x${screen.height}`
+            };
 
             // Render Tabella
-            document.getElementById('data-body').innerHTML = sensorData.map(d => `
+            document.getElementById('sensor-table').innerHTML = sensors.map(s => `
                 <tr>
-                    <td>${d.s}</td>
-                    <td>${d.v}</td>
-                    <td class="${d.r === 'ALTO' ? 'risk-high' : 'risk-low'}">${d.r}</td>
+                    <td><strong>${s.label}</strong></td>
+                    <td style="word-break:break-all">${values[s.id]}</td>
+                    <td class="risk-${s.risk.toLowerCase().substring(0,3)}">${s.risk}</td>
+                    <td style="font-size:0.65rem; opacity:0.7">${s.desc}</td>
                 </tr>
             `).join('');
 
-            // IP e QR
-            fetch('https://api.ipify.org?format=json')
-                .then(r => r.json()).then(data => document.getElementById('ip-display').innerText = `IP: ${data.ip}`);
-            
-            const alias = generateAlias(navigator.userAgent + gpu);
-            document.getElementById('user-alias').innerText = alias;
-            document.getElementById('qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(alias)}`;
+            // IP Fetch
+            fetch('https://api.ipify.org?format=json').then(r => r.json()).then(d => {
+                const ipCell = document.querySelector('td:nth-child(2)'); 
+                if(ipCell) ipCell.innerText = d.ip;
+            });
 
-            // --- COOKIE SENSITIVITY ---
-            // Dato che non possiamo leggere cookie di altri siti, mostriamo cosa un tracker saprebbe di te
-            const cookies = document.cookie.split(';').filter(c => c.length > 0).map(c => c.split('=')[0].trim());
-            const potentialTrackers = [];
-            
-            // Analisi dei "segnali" nel DOM
-            if (window.chrome) potentialTrackers.push("GOOGLE_ECOSYSTEM");
-            if (navigator.share) potentialTrackers.push("MOBILE_USER_SIGNATURE");
-            if (Intl.DateTimeFormat().resolvedOptions().timeZone) potentialTrackers.push("LOCATION_ZONE_LEAK");
-            
-            const allTraces = [...cookies, ...potentialTrackers];
-            document.getElementById('cookie-list').innerHTML = allTraces.length > 0 
-                ? allTraces.map(t => `<span class="tag">${t}</span>`).join(", ")
-                : "NESSUNA TRACCIA LOCALE IDENTIFICATA. SEI UN FANTASMA.";
+            // Alias & QR
+            const alias = `GHOST_${Math.abs(values.ua.length * gpu.length) % 999}`;
+            document.getElementById('user-alias').innerText = alias;
+            document.getElementById('qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${alias}`;
+            document.getElementById('tz-val').innerText = tz;
+
+            // --- SOTA SOCIAL FOOTPRINTING ---
+            const socialDetect = () => {
+                const traces = [];
+                // Check per oggetti globali lasciati da plugin o script comuni
+                if (window.chrome) traces.push("Google_Chrome_User");
+                if (window.fbq || window.FB) traces.push("Facebook_Active_Session");
+                if (window.gtag || window.ga) traces.push("Google_Analytics_Tracker");
+                if (navigator.share) traces.push("Mobile_Device_User");
+                if (window.twq) traces.push("X/Twitter_Ads_Pixel");
+                
+                // Cookie locali (se presenti)
+                const cookies = document.cookie.split(';').filter(c => c.length > 0);
+                cookies.forEach(c => traces.push(`Cookie: ${c.split('=')[0].trim()}`));
+
+                const container = document.getElementById('social-tags');
+                container.innerHTML = traces.length > 0 
+                    ? traces.map(t => `<span class="tag">${t}</span>`).join('')
+                    : "<span class='tag'>NESSUNA TRACCIA EVIDENTE</span>";
+            };
+            socialDetect();
         }
 
-        probe();
+        init();
     })();
 </script>
 

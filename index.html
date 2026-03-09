@@ -3,151 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRIVACY SENSOR SOTA</title>
+    <title>PRIVACY_SENSE_v3</title>
     <style>
-        :root { --neon: #00ff41; --bg: #050505; --warn: #ff3e3e; --info: #38bdf8; }
-        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; margin: 0; padding: 15px; font-size: 14px; }
-        .container { max-width: 900px; margin: 0 auto; border: 1px solid var(--neon); padding: 20px; box-shadow: 0 0 20px rgba(0,255,65,0.1); }
+        :root { --neon: #00ff41; --bg: #0d1117; --warn: #ff3e3e; --dim: #8b949e; }
+        body { background: var(--bg); color: var(--neon); font-family: 'Consolas', 'Courier New', monospace; margin: 0; padding: 20px; line-height: 1.4; }
+        .wrapper { max-width: 1000px; margin: 0 auto; border: 1px solid var(--neon); padding: 25px; box-shadow: 0 0 30px rgba(0, 255, 65, 0.1); }
         
-        /* Header */
-        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--neon); padding-bottom: 15px; margin-bottom: 20px; }
-        .identity-box h1 { margin: 0; font-size: 1.2rem; opacity: 0.8; }
-        #user-alias { font-size: 2rem; font-weight: bold; text-shadow: 0 0 10px var(--neon); }
+        /* Layout */
+        .header { display: flex; justify-content: space-between; border-bottom: 2px solid var(--neon); padding-bottom: 20px; margin-bottom: 30px; }
+        .id-label { font-size: 0.8rem; color: var(--dim); }
+        #user-alias { font-size: 1.8rem; font-weight: bold; text-transform: uppercase; }
         
-        /* Tables */
-        table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
-        th, td { border: 1px solid rgba(0, 255, 65, 0.2); padding: 10px; text-align: left; }
-        th { background: rgba(0, 255, 65, 0.1); color: var(--neon); text-transform: uppercase; font-size: 0.75rem; }
-        .risk-high { color: var(--warn); }
-        .risk-med { color: orange; }
-        .risk-low { color: var(--info); }
+        /* Tabelle */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; background: rgba(0,0,0,0.3); }
+        th, td { border: 1px solid rgba(0, 255, 65, 0.2); padding: 12px; text-align: left; font-size: 0.85rem; }
+        th { background: rgba(0, 255, 65, 0.1); text-transform: uppercase; letter-spacing: 1px; }
+        
+        .risk-high { color: var(--warn); font-weight: bold; }
+        .risk-med { color: #f39c12; }
+        .risk-low { color: #3498db; }
 
-        /* Footprint Section */
-        .panel { border: 1px solid var(--neon); padding: 15px; background: rgba(0,0,0,0.5); margin-bottom: 20px; }
-        .panel h3 { margin-top: 0; color: var(--info); font-size: 0.9rem; border-bottom: 1px solid var(--info); display: inline-block; }
-        .tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-        .tag { border: 1px solid var(--neon); padding: 3px 8px; font-size: 0.75rem; border-radius: 3px; }
-        
-        .explanation { font-size: 0.7rem; color: #888; margin-top: 10px; text-transform: none; line-height: 1.4; }
-        
-        @media (max-width: 600px) { th { display: none; } td { display: block; width: 100%; box-sizing: border-box; } }
+        /* Social Detect */
+        .scan-panel { border: 1px solid #30363d; padding: 20px; border-radius: 4px; margin-top: 20px; background: #161b22; }
+        .scan-title { font-weight: bold; margin-bottom: 15px; color: var(--dim); border-bottom: 1px solid #30363d; padding-bottom: 5px; }
+        .detect-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+        .detect-item { border: 1px dashed #30363d; padding: 10px; font-size: 0.75rem; }
+        .status-positive { color: var(--warn); }
+        .status-negative { color: var(--dim); }
+
+        .explainer { font-size: 0.7rem; color: var(--dim); margin-top: 10px; text-transform: none; }
+        #qr-code { border: 5px solid #fff; width: 100px; height: 100px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <div class="identity-box">
-            <h1>DIGITAL_SHADOW_ID:</h1>
-            <div id="user-alias">CALCOLO...</div>
+<div class="wrapper">
+    <div class="header">
+        <div>
+            <div class="id-label">STABILISHING SHADOW_ID...</div>
+            <div id="user-alias">GENERATING...</div>
+            <div id="ip-addr" style="margin-top:5px; color: var(--dim)">IP: TRACING...</div>
         </div>
-        <div id="qr-container">
-            <img id="qr-img" src="" alt="QR" style="width: 80px; height: 80px; border: 2px solid #fff;">
-        </div>
-    </header>
+        <img id="qr-code" src="" alt="QR ID">
+    </div>
 
     <table>
         <thead>
             <tr>
                 <th>Sensore</th>
-                <th>Valore Rilevato</th>
-                <th>Rischio</th>
-                <th>Perché?</th>
+                <th>Dato Rilevato</th>
+                <th>Livello Rischio</th>
+                <th>Analisi Razionale</th>
             </tr>
         </thead>
-        <tbody id="sensor-table">
-            </tbody>
+        <tbody id="sensor-table"></tbody>
     </table>
 
-    <div class="panel">
-        <h3>SOCIAL_FOOTPRINT_ANALYSIS</h3>
-        <div class="explanation">
-            Tentativo di rilevamento servizi attivi tramite "Resource Timing" e "Global Object Sniffing". 
-            I siti che visiti lasciano tracce nel browser che JS può intercettare.
+    <div class="scan-panel">
+        <div class="scan-title">TIMING ATTACK (SOCIAL LOG-IN DETECTION)</div>
+        <div class="detect-grid" id="social-grid">
+            </div>
+        <div class="explainer">
+            <strong>Nota Tecnica:</strong> Questa tecnica misura il tempo di risposta del browser a richieste cross-origin. 
+            Se il tempo è &lt; 50ms, la risorsa è probabilmente già nella tua cache (sei loggato o visiti spesso il sito).
         </div>
-        <div id="social-tags" class="tag-list">Analisi impronte digitali...</div>
     </div>
 
-    <div class="panel">
-        <h3>LOCATION_ZONE_LEAK: <span id="tz-val" style="color:#fff">...</span></h3>
-        <div class="explanation">
-            <strong>Cos'è:</strong> Anche senza GPS, il tuo browser rivela il fuso orario configurato (es. `Europe/Rome`). 
-            Questo permette di localizzarti geograficamente con un errore minimo, bypassando i blocchi privacy della posizione.
-        </div>
+    <div class="explainer" style="margin-top:30px; border-top: 1px solid #30363d; padding-top:10px;">
+        * <strong>LOCATION_ZONE_LEAK:</strong> Rilevato tramite <code>Intl.DateTimeFormat</code>. Rivela la tua area geografica anche se il GPS è disattivato.
     </div>
 </div>
 
 <script>
     (function() {
-        const sensors = [
-            { id: "ua", label: "User Agent", risk: "ALTO", desc: "Svela versione OS e Browser esatta." },
-            { id: "gpu", label: "Renderer GPU", risk: "ALTO", desc: "Univoco per combinazione hardware/driver." },
-            { id: "ip", label: "Public IP", risk: "MEDIO", desc: "Localizzazione tramite provider rete." },
-            { id: "cores", label: "CPU Cores", risk: "BASSO", desc: "Dato hardware generico." },
-            { id: "mem", label: "RAM (Stima)", risk: "BASSO", desc: "Capacità di calcolo del sistema." },
-            { id: "scr", label: "Display Res", risk: "MEDIO", desc: "Risoluzione e ratio dello schermo." }
+        // --- 1. CONFIGURAZIONE DATI ---
+        const config = [
+            { id: 'ua', n: 'User Agent', r: 'ALTO', d: 'Identifica browser e OS. Punto di partenza per attacchi mirati.' },
+            { id: 'gpu', n: 'GPU Renderer', r: 'ALTO', d: 'Univoco per hardware. Permette il tracciamento senza cookie.' },
+            { id: 'tz', n: 'Zone Leak', r: 'MEDIO', d: 'Geolocalizzazione silenziosa tramite fuso orario.' },
+            { id: 'cores', n: 'CPU Logic', r: 'BASSO', d: 'Dato strutturale generico, contribuisce al fingerprint.' },
+            { id: 'mem', n: 'RAM Est.', r: 'BASSO', d: 'Stima memoria di sistema.' }
         ];
 
-        async function init() {
+        const socialTargets = [
+            { name: 'Facebook', url: 'https://www.facebook.com/favicon.ico' },
+            { name: 'Google/Gmail', url: 'https://mail.google.com/favicon.ico' },
+            { name: 'Twitter/X', url: 'https://twitter.com/favicon.ico' },
+            { name: 'LinkedIn', url: 'https://www.linkedin.com/favicon.ico' }
+        ];
+
+        // --- 2. LOGICA DI ANALISI ---
+        async function runAnalysis() {
             const gl = document.createElement('canvas').getContext('webgl');
             const dbg = gl ? gl.getExtension('WEBGL_debug_renderer_info') : null;
-            const gpu = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : "Protetta/N.D.";
-            const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const gpu = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : "Protetta";
 
-            const values = {
+            const data = {
                 ua: navigator.userAgent,
                 gpu: gpu,
-                ip: "Intercettazione...",
+                tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
                 cores: navigator.hardwareConcurrency || "N/D",
-                mem: navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "N/D",
-                scr: `${screen.width}x${screen.height}`
+                mem: navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "N/D"
             };
 
-            // Render Tabella
-            document.getElementById('sensor-table').innerHTML = sensors.map(s => `
+            // Popola Tabella
+            document.getElementById('sensor-table').innerHTML = config.map(c => `
                 <tr>
-                    <td><strong>${s.label}</strong></td>
-                    <td style="word-break:break-all">${values[s.id]}</td>
-                    <td class="risk-${s.risk.toLowerCase().substring(0,3)}">${s.risk}</td>
-                    <td style="font-size:0.65rem; opacity:0.7">${s.desc}</td>
+                    <td>${c.n}</td>
+                    <td style="word-break:break-all">${data[c.id]}</td>
+                    <td class="risk-${c.r.toLowerCase().substring(0,3)}">${c.r}</td>
+                    <td style="opacity:0.7">${c.d}</td>
                 </tr>
             `).join('');
 
-            // IP Fetch
+            // QR e Alias
+            const aliasHash = Math.abs(data.ua.split('').reduce((a,b)=>{a=((a<<5)-a)+b.charCodeAt(0);return a&a},0));
+            const alias = `SHADOW-${aliasHash.toString(16).toUpperCase().substring(0,4)}`;
+            document.getElementById('user-alias').innerText = alias;
+            document.getElementById('qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${alias}`;
+
+            // IP
             fetch('https://api.ipify.org?format=json').then(r => r.json()).then(d => {
-                const ipCell = document.querySelector('td:nth-child(2)'); 
-                if(ipCell) ipCell.innerText = d.ip;
+                document.getElementById('ip-addr').innerText = `IP: ${d.ip}`;
             });
 
-            // Alias & QR
-            const alias = `GHOST_${Math.abs(values.ua.length * gpu.length) % 999}`;
-            document.getElementById('user-alias').innerText = alias;
-            document.getElementById('qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${alias}`;
-            document.getElementById('tz-val').innerText = tz;
-
-            // --- SOTA SOCIAL FOOTPRINTING ---
-            const socialDetect = () => {
-                const traces = [];
-                // Check per oggetti globali lasciati da plugin o script comuni
-                if (window.chrome) traces.push("Google_Chrome_User");
-                if (window.fbq || window.FB) traces.push("Facebook_Active_Session");
-                if (window.gtag || window.ga) traces.push("Google_Analytics_Tracker");
-                if (navigator.share) traces.push("Mobile_Device_User");
-                if (window.twq) traces.push("X/Twitter_Ads_Pixel");
-                
-                // Cookie locali (se presenti)
-                const cookies = document.cookie.split(';').filter(c => c.length > 0);
-                cookies.forEach(c => traces.push(`Cookie: ${c.split('=')[0].trim()}`));
-
-                const container = document.getElementById('social-tags');
-                container.innerHTML = traces.length > 0 
-                    ? traces.map(t => `<span class="tag">${t}</span>`).join('')
-                    : "<span class='tag'>NESSUNA TRACCIA EVIDENTE</span>";
-            };
-            socialDetect();
+            // --- 3. TIMING ATTACK EXECUTION ---
+            const grid = document.getElementById('social-grid');
+            socialTargets.forEach(target => {
+                const start = performance.now();
+                const img = new Image();
+                img.onload = img.onerror = () => {
+                    const end = performance.now();
+                    const duration = end - start;
+                    const isLogged = duration < 60; // Soglia euristica
+                    
+                    const div = document.createElement('div');
+                    div.className = 'detect-item';
+                    div.innerHTML = `
+                        <strong>${target.name}</strong><br>
+                        Latenza: ${duration.toFixed(2)}ms<br>
+                        Stato: <span class="${isLogged ? 'status-positive' : 'status-negative'}">
+                            ${isLogged ? 'RILEVATA TRACCIA (LOGGED)' : 'NESSUN LOG RECENTE'}
+                        </span>
+                    `;
+                    grid.appendChild(div);
+                };
+                img.src = target.url + "?cache=" + Math.random();
+            });
         }
 
-        init();
+        runAnalysis();
     })();
 </script>
 

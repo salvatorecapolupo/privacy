@@ -3,156 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRIVACY_SENSE_v3</title>
+    <title>MASTER_FINGERPRINT_SCANNER</title>
     <style>
-        :root { --neon: #00ff41; --bg: #0d1117; --warn: #ff3e3e; --dim: #8b949e; }
-        body { background: var(--bg); color: var(--neon); font-family: 'Consolas', 'Courier New', monospace; margin: 0; padding: 20px; line-height: 1.4; }
-        .wrapper { max-width: 1000px; margin: 0 auto; border: 1px solid var(--neon); padding: 25px; box-shadow: 0 0 30px rgba(0, 255, 65, 0.1); }
+        :root { --neon: #00ff41; --bg: #050505; --warn: #ff3e3e; --info: #00d4ff; --border: #1a1a1a; }
+        body { background: var(--bg); color: var(--neon); font-family: 'Consolas', monospace; margin: 0; padding: 20px; font-size: 13px; }
+        .container { max-width: 1000px; margin: 0 auto; border: 1px solid var(--neon); padding: 30px; box-shadow: 0 0 40px rgba(0, 255, 65, 0.05); }
         
-        /* Layout */
-        .header { display: flex; justify-content: space-between; border-bottom: 2px solid var(--neon); padding-bottom: 20px; margin-bottom: 30px; }
-        .id-label { font-size: 0.8rem; color: var(--dim); }
-        #user-alias { font-size: 1.8rem; font-weight: bold; text-transform: uppercase; }
+        /* Header & ID */
+        .header { display: flex; justify-content: space-between; border-bottom: 2px solid var(--neon); padding-bottom: 20px; margin-bottom: 25px; }
+        .master-id-area { flex-grow: 1; }
+        .label { color: var(--info); font-size: 0.7rem; letter-spacing: 2px; }
+        .alias { font-size: 2.2rem; font-weight: 900; color: #fff; text-shadow: 0 0 10px var(--neon); }
         
-        /* Tabelle */
-        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; background: rgba(0,0,0,0.3); }
-        th, td { border: 1px solid rgba(0, 255, 65, 0.2); padding: 12px; text-align: left; font-size: 0.85rem; }
-        th { background: rgba(0, 255, 65, 0.1); text-transform: uppercase; letter-spacing: 1px; }
-        
-        .risk-high { color: var(--warn); font-weight: bold; }
-        .risk-med { color: #f39c12; }
-        .risk-low { color: #3498db; }
+        /* Table */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        th, td { border: 1px solid var(--border); padding: 14px; text-align: left; }
+        th { background: rgba(0, 255, 65, 0.05); font-size: 0.75rem; color: var(--info); }
+        tr:hover { background: rgba(255, 255, 255, 0.02); }
+        .risk-alto { color: var(--warn); }
+        .risk-medio { color: #ffaa00; }
+        .risk-basso { color: var(--neon); }
 
+        /* Hashing Box */
+        .hash-box { background: #111; border: 1px solid var(--info); padding: 20px; margin-top: 20px; position: relative; overflow: hidden; }
+        .hash-formula { font-family: serif; font-style: italic; color: #888; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .hash-result { font-size: 1.1rem; color: var(--info); word-break: break-all; font-weight: bold; }
+        
         /* Social Detect */
-        .scan-panel { border: 1px solid #30363d; padding: 20px; border-radius: 4px; margin-top: 20px; background: #161b22; }
-        .scan-title { font-weight: bold; margin-bottom: 15px; color: var(--dim); border-bottom: 1px solid #30363d; padding-bottom: 5px; }
-        .detect-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
-        .detect-item { border: 1px dashed #30363d; padding: 10px; font-size: 0.75rem; }
-        .status-positive { color: var(--warn); }
-        .status-negative { color: var(--dim); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; margin-top: 15px; }
+        .card { border: 1px solid var(--border); padding: 15px; background: #0a0a0a; }
+        .positive { border-left: 4px solid var(--warn); }
 
-        .explainer { font-size: 0.7rem; color: var(--dim); margin-top: 10px; text-transform: none; }
-        #qr-code { border: 5px solid #fff; width: 100px; height: 100px; }
+        .scanline { width: 100%; height: 100px; background: linear-gradient(0deg, transparent, rgba(0,255,65,0.05), transparent); position: fixed; top: -100px; left: 0; pointer-events: none; animation: scan 3s linear infinite; }
+        @keyframes scan { to { top: 100vh; } }
     </style>
 </head>
 <body>
 
-<div class="wrapper">
+<div class="scanline"></div>
+
+<div class="container">
     <div class="header">
-        <div>
-            <div class="id-label">STABILISHING SHADOW_ID...</div>
-            <div id="user-alias">GENERATING...</div>
-            <div id="ip-addr" style="margin-top:5px; color: var(--dim)">IP: TRACING...</div>
+        <div class="master-id-area">
+            <span class="label">SESSION_ALIAS_ID</span>
+            <div id="user-alias" class="alias">GENERAZIONE...</div>
+            <div id="ip-info" style="color:#666; margin-top:5px;">IP_ADDR: TRACING...</div>
         </div>
-        <img id="qr-code" src="" alt="QR ID">
+        <img id="qr-code" style="width: 100px; height: 100px; border: 4px solid #fff;" src="" alt="QR">
     </div>
 
     <table>
         <thead>
             <tr>
-                <th>Sensore</th>
-                <th>Dato Rilevato</th>
-                <th>Livello Rischio</th>
-                <th>Analisi Razionale</th>
+                <th>SENSORE</th>
+                <th>DATO ACQUISITO</th>
+                <th>RISCHIO</th>
+                <th>LOGICA TECNICA</th>
             </tr>
         </thead>
-        <tbody id="sensor-table"></tbody>
+        <tbody id="data-table"></tbody>
     </table>
 
-    <div class="scan-panel">
-        <div class="scan-title">TIMING ATTACK (SOCIAL LOG-IN DETECTION)</div>
-        <div class="detect-grid" id="social-grid">
-            </div>
-        <div class="explainer">
-            <strong>Nota Tecnica:</strong> Questa tecnica misura il tempo di risposta del browser a richieste cross-origin. 
-            Se il tempo è &lt; 50ms, la risorsa è probabilmente già nella tua cache (sei loggato o visiti spesso il sito).
-        </div>
+    <div class="hash-box">
+        <div class="label">IDENTIFICATORE UNICO HARDWARE (MASTER HASH)</div>
+        <div class="hash-formula" id="hash-formula">CALCOLO FORMULA: hash( UA + GPU + CPU + RES + TZ + LANG ) = ...</div>
+        <div id="master-hash" class="hash-result">CALCOLO SHA-256 IN CORSO...</div>
     </div>
 
-    <div class="explainer" style="margin-top:30px; border-top: 1px solid #30363d; padding-top:10px;">
-        * <strong>LOCATION_ZONE_LEAK:</strong> Rilevato tramite <code>Intl.DateTimeFormat</code>. Rivela la tua area geografica anche se il GPS è disattivato.
+    <div style="margin-top:40px;">
+        <span class="label">SOCIAL_SIDE_CHANNEL_ATTACK</span>
+        <div class="grid" id="social-grid"></div>
     </div>
 </div>
 
 <script>
     (function() {
-        // --- 1. CONFIGURAZIONE DATI ---
-        const config = [
-            { id: 'ua', n: 'User Agent', r: 'ALTO', d: 'Identifica browser e OS. Punto di partenza per attacchi mirati.' },
-            { id: 'gpu', n: 'GPU Renderer', r: 'ALTO', d: 'Univoco per hardware. Permette il tracciamento senza cookie.' },
-            { id: 'tz', n: 'Zone Leak', r: 'MEDIO', d: 'Geolocalizzazione silenziosa tramite fuso orario.' },
-            { id: 'cores', n: 'CPU Logic', r: 'BASSO', d: 'Dato strutturale generico, contribuisce al fingerprint.' },
-            { id: 'mem', n: 'RAM Est.', r: 'BASSO', d: 'Stima memoria di sistema.' }
-        ];
+        // --- 1. UTILS & HASHING ---
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
 
-        const socialTargets = [
-            { name: 'Facebook', url: 'https://www.facebook.com/favicon.ico' },
-            { name: 'Google/Gmail', url: 'https://mail.google.com/favicon.ico' },
-            { name: 'Twitter/X', url: 'https://twitter.com/favicon.ico' },
-            { name: 'LinkedIn', url: 'https://www.linkedin.com/favicon.ico' }
-        ];
-
-        // --- 2. LOGICA DI ANALISI ---
-        async function runAnalysis() {
+        const getGPU = () => {
             const gl = document.createElement('canvas').getContext('webgl');
             const dbg = gl ? gl.getExtension('WEBGL_debug_renderer_info') : null;
-            const gpu = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : "Protetta";
+            return dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : "Software_Renderer";
+        };
 
+        // --- 2. DATA ACQUISITION ---
+        async function run() {
             const data = {
                 ua: navigator.userAgent,
-                gpu: gpu,
-                tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                gpu: getGPU(),
                 cores: navigator.hardwareConcurrency || "N/D",
-                mem: navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "N/D"
+                mem: navigator.deviceMemory ? `${navigator.deviceMemory}GB` : ">4GB",
+                res: `${screen.width}x${screen.height}`,
+                tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                lang: navigator.language
             };
 
-            // Popola Tabella
-            document.getElementById('sensor-table').innerHTML = config.map(c => `
+            // Costruzione Tabella
+            const rows = [
+                ["User Agent", data.ua, "ALTO", "Rivela versioni software vulnerabili."],
+                ["GPU Renderer", data.gpu, "ALTO", "Firma hardware quasi impossibile da camuffare."],
+                ["Timezone", data.tz, "MEDIO", "Geolocalizzazione bypassando i blocchi GPS."],
+                ["Hardware", `${data.cores} Cores / ${data.mem} RAM`, "BASSO", "Delinea il profilo di potenza del device."],
+                ["Screen", data.res, "MEDIO", "Identifica il form-factor del dispositivo."]
+            ];
+
+            document.getElementById('data-table').innerHTML = rows.map(r => `
                 <tr>
-                    <td>${c.n}</td>
-                    <td style="word-break:break-all">${data[c.id]}</td>
-                    <td class="risk-${c.r.toLowerCase().substring(0,3)}">${c.r}</td>
-                    <td style="opacity:0.7">${c.d}</td>
+                    <td><strong>${r[0]}</strong></td>
+                    <td style="word-break:break-all; font-family:monospace;">${r[1]}</td>
+                    <td class="risk-${r[2].toLowerCase()}">${r[2]}</td>
+                    <td style="color:#888; font-size:0.7rem;">${r[3]}</td>
                 </tr>
             `).join('');
 
-            // QR e Alias
-            const aliasHash = Math.abs(data.ua.split('').reduce((a,b)=>{a=((a<<5)-a)+b.charCodeAt(0);return a&a},0));
-            const alias = `SHADOW-${aliasHash.toString(16).toUpperCase().substring(0,4)}`;
+            // --- 3. MASTER HASH CALCULATION ---
+            const rawString = `${data.ua}|${data.gpu}|${data.cores}|${data.res}|${data.tz}|${data.lang}`;
+            const finalHash = await sha256(rawString);
+            
+            document.getElementById('master-hash').innerText = finalHash;
+            document.getElementById('hash-formula').innerText = `FORMULA: SHA-256( "${data.ua.substring(0,10)}..." + "${data.gpu}" + ${data.cores} + "${data.res}" + "${data.tz}" )`;
+            
+            // Alias & QR
+            const alias = `FANTASMA-${finalHash.substring(0,6).toUpperCase()}`;
             document.getElementById('user-alias').innerText = alias;
-            document.getElementById('qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${alias}`;
+            document.getElementById('qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${finalHash}`;
 
             // IP
             fetch('https://api.ipify.org?format=json').then(r => r.json()).then(d => {
-                document.getElementById('ip-addr').innerText = `IP: ${d.ip}`;
+                document.getElementById('ip-info').innerText = `IP_ADDR: ${d.ip}`;
             });
 
-            // --- 3. TIMING ATTACK EXECUTION ---
-            const grid = document.getElementById('social-grid');
-            socialTargets.forEach(target => {
+            // --- 4. TIMING ATTACK ---
+            const sites = [
+                { name: 'Facebook', url: 'https://www.facebook.com/favicon.ico' },
+                { name: 'Google', url: 'https://accounts.google.com/favicon.ico' },
+                { name: 'LinkedIn', url: 'https://www.linkedin.com/favicon.ico' },
+                { name: 'Twitter/X', url: 'https://twitter.com/favicon.ico' }
+            ];
+
+            sites.forEach(s => {
                 const start = performance.now();
                 const img = new Image();
                 img.onload = img.onerror = () => {
-                    const end = performance.now();
-                    const duration = end - start;
-                    const isLogged = duration < 60; // Soglia euristica
-                    
-                    const div = document.createElement('div');
-                    div.className = 'detect-item';
-                    div.innerHTML = `
-                        <strong>${target.name}</strong><br>
-                        Latenza: ${duration.toFixed(2)}ms<br>
-                        Stato: <span class="${isLogged ? 'status-positive' : 'status-negative'}">
-                            ${isLogged ? 'RILEVATA TRACCIA (LOGGED)' : 'NESSUN LOG RECENTE'}
+                    const diff = performance.now() - start;
+                    const isLogged = diff < 80;
+                    const card = document.createElement('div');
+                    card.className = `card ${isLogged ? 'positive' : ''}`;
+                    card.innerHTML = `
+                        <strong>${s.name}</strong><br>
+                        Latenza: ${diff.toFixed(1)}ms<br>
+                        <span style="color:${isLogged ? 'var(--warn)' : '#555'}">
+                            ${isLogged ? '[TRACCIA RILEVATA]' : '[NESSUNA CACHE]'}
                         </span>
                     `;
-                    grid.appendChild(div);
+                    document.getElementById('social-grid').appendChild(card);
                 };
-                img.src = target.url + "?cache=" + Math.random();
+                img.src = `${s.url}?t=${Math.random()}`; // Cache-busting testuale
             });
         }
 
-        runAnalysis();
+        run();
     })();
 </script>
 

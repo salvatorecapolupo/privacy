@@ -3,134 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Browser Fingerprint Monitor</title>
+    <title>TERMINAL PRIVACY SENSOR</title>
     <style>
-        :root { --bg: #0a0a0a; --card: #161616; --text: #e0e0e0; --accent: #00ff41; --border: #333; }
-        body { font-family: 'Courier New', monospace; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; }
+        :root { --neon: #00ff41; --bg: #050505; --warn: #ff3e3e; --low: #38bdf8; }
+        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; margin: 0; padding: 20px; text-transform: uppercase; }
+        .container { max-width: 1000px; margin: 0 auto; border: 1px solid var(--neon); padding: 20px; box-shadow: 0 0 15px rgba(0, 255, 65, 0.2); }
         
-        .header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; margin-bottom: 20px; border-bottom: 2px solid var(--accent); padding-bottom: 20px; }
-        .alias-box h1 { font-size: 1.2rem; margin: 0; color: var(--accent); }
-        .alias-name { font-size: 2rem; font-weight: bold; }
-        .qr-code img { background: white; padding: 5px; border-radius: 4px; width: 120px; }
+        header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; border-bottom: 1px dashed var(--neon); padding-bottom: 20px; }
+        .glitch { font-size: 1.5rem; font-weight: bold; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
 
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background: var(--card); }
-        th, td { text-align: left; padding: 12px; border: 1px solid var(--border); font-size: 0.9rem; }
-        th { background: #222; color: var(--accent); text-transform: uppercase; width: 30%; }
-        tr:hover { background: #1d1d1d; }
-
-        .footer { background: var(--card); padding: 15px; border-left: 4px solid var(--accent); font-size: 0.85rem; }
-        .cookie-list { color: var(--accent); word-break: break-all; margin-top: 10px; display: block; }
+        .qr-area { background: #fff; padding: 10px; border: 4px double var(--neon); }
         
-        @media (max-width: 600px) {
-            th, td { display: block; width: 100%; border: none; }
-            th { border-top: 1px solid var(--border); padding-top: 20px; }
-            .header { text-align: center; justify-content: center; }
-        }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.85rem; }
+        th, td { border: 1px solid rgba(0, 255, 65, 0.3); padding: 12px; text-align: left; }
+        th { color: var(--bg); background: var(--neon); font-weight: bold; width: 30%; }
+        .risk-high { color: var(--warn); font-weight: bold; }
+        .risk-low { color: var(--low); }
+
+        .scan-line { width: 100%; height: 2px; background: var(--neon); position: fixed; top: 0; left: 0; opacity: 0.1; pointer-events: none; animation: scan 4s linear infinite; }
+        @keyframes scan { from { top: 0; } to { top: 100vh; } }
+
+        .cookie-vault { background: rgba(255, 62, 62, 0.05); border: 1px solid var(--warn); padding: 15px; margin-top: 20px; }
+        .cookie-vault h3 { color: var(--warn); margin-top: 0; font-size: 0.9rem; }
+        #cookie-list { color: #ccc; font-size: 0.8rem; letter-spacing: 1px; line-height: 1.5; }
+        .tag { border: 1px solid #555; padding: 2px 5px; margin-right: 5px; display: inline-block; margin-bottom: 5px; }
     </style>
 </head>
 <body>
 
+<div class="scan-line"></div>
+
 <div class="container">
-    <div class="header">
-        <div class="alias-box">
-            <h1>IL TUO ID BROWSER:</h1>
-            <div id="user-alias" class="alias-name">Analisi...</div>
+    <header>
+        <div>
+            <div class="glitch">[ ANALISI IMPRONTA DIGITALE ]</div>
+            <div style="font-size: 2.5rem;" id="user-alias">...CALCOLO...</div>
+            <div id="ip-display" style="margin-top: 10px; color: var(--low);">IP: INTERCEPTING...</div>
         </div>
-        <div class="qr-code">
-            <img id="qr-img" src="" alt="QR Code">
+        <div class="qr-area">
+            <img id="qr-img" src="" alt="Session ID" style="width: 100px; height: 100px;">
         </div>
-    </div>
+    </header>
 
     <table id="data-table">
         <thead>
             <tr>
-                <th>Parametro</th>
-                <th>Dato Rilevato</th>
+                <th>SENSORE</th>
+                <th>VALORE INTERCETTATO</th>
+                <th>LIVELLO RISCHIO</th>
             </tr>
         </thead>
         <tbody id="data-body">
             </tbody>
     </table>
 
-    <div class="footer">
-        <strong>Cookie e Tracciatori Identificati:</strong>
-        <span id="cookie-list" class="cookie-list">Scansione in corso...</span>
+    <div class="cookie-vault">
+        <h3>TRACCE DI NAVIGAZIONE E IDENTIFICATORI RILEVATI:</h3>
+        <div id="cookie-list">Sincronizzazione con il database dei tracker...</div>
     </div>
 </div>
 
 <script>
     (function() {
-        // --- 1. GENERAZIONE ALIAS UNICO ---
-        function getAlias(fp) {
-            const adj = ["Alpha", "Cyber", "Ghost", "Neon", "Shadow", "Quantum", "Void"];
-            const noun = ["Raptor", "Node", "Protocol", "Matrix", "Hydra", "Sentinel", "Core"];
+        const adjectives = ["SILENT", "VOID", "DARK", "NEON", "CYBER", "GHOST", "NULL"];
+        const nouns = ["SPECTRE", "NODE", "PULSE", "REAPER", "DAEMON", "PROXY", "BIT"];
+
+        function generateAlias(str) {
             let hash = 0;
-            for (let i = 0; i < fp.length; i++) { hash = ((hash << 5) - hash) + fp.charCodeAt(i); hash |= 0; }
-            const index = Math.abs(hash);
-            return `${adj[index % adj.length]}-${noun[(index >> 2) % noun.length]}-${index % 1000}`;
+            for (let i = 0; i < str.length; i++) { hash = ((hash << 5) - hash) + str.charCodeAt(i); hash |= 0; }
+            const h = Math.abs(hash);
+            return `${adjectives[h % adjectives.length]}_${nouns[(h >> 2) % nouns.length]}_${h % 99}`;
         }
 
-        // --- 2. RACCOLTA DATI ---
-        async function buildReport() {
+        async function probe() {
             const gl = document.createElement('canvas').getContext('webgl');
             const debugInfo = gl ? gl.getExtension('WEBGL_debug_renderer_info') : null;
-            const gpu = debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : "N/D";
+            const gpu = debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : "HIDDEN";
             
-            const report = {
-                "Indirizzo IP": "Caricamento...",
-                "User Agent": navigator.userAgent,
-                "Sistema Operativo": navigator.platform,
-                "Risoluzione Schermo": `${screen.width}x${screen.height}`,
-                "Lingua Browser": navigator.language,
-                "Core CPU": navigator.hardwareConcurrency || "N/D",
-                "Memoria RAM (stima)": navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "N/D",
-                "GPU": gpu,
-                "Fuso Orario": Intl.DateTimeFormat().resolvedOptions().timeZone,
-                "Cookie Abilitati": navigator.cookieEnabled ? "Sì" : "No",
-                "Do Not Track": navigator.doNotTrack === "1" ? "Attivo" : "Disattivo",
-                "Touch Screen": ('ontouchstart' in window) ? "Sì" : "No"
-            };
+            // Verifica AdBlock (metodo euristico)
+            let adBlockActive = false;
+            try { await fetch(new Request('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js', { mode: 'no-cors' })); } 
+            catch (e) { adBlockActive = true; }
 
-            // Inserimento dati nella tabella
-            const tbody = document.getElementById('data-body');
-            tbody.innerHTML = Object.entries(report).map(([k, v]) => `
+            const sensorData = [
+                { s: "User Agent", v: navigator.userAgent, r: "ALTO" },
+                { s: "GPU Vendor", v: gpu, r: "MEDIO" },
+                { s: "Core Logici", v: navigator.hardwareConcurrency || "N/D", r: "BASSO" },
+                { s: "RAM (Stima)", v: navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "N/D", r: "BASSO" },
+                { s: "Risoluzione", v: `${screen.width}x${screen.height}`, r: "MEDIO" },
+                { s: "Lingua", v: navigator.language, r: "BASSO" },
+                { s: "AdBlocker", v: adBlockActive ? "ATTIVO" : "NON RILEVATO", r: adBlockActive ? "BASSO" : "ALTO" },
+                { s: "Incognito", v: (navigator.storage && navigator.storage.estimate) ? "PROBABILE NO" : "RILEVATO", r: "ALTO" }
+            ];
+
+            // Render Tabella
+            document.getElementById('data-body').innerHTML = sensorData.map(d => `
                 <tr>
-                    <th>${k}</th>
-                    <td id="val-${k.replace(/\s+/g, '')}">${v}</td>
+                    <td>${d.s}</td>
+                    <td>${d.v}</td>
+                    <td class="${d.r === 'ALTO' ? 'risk-high' : 'risk-low'}">${d.r}</td>
                 </tr>
             `).join('');
 
-            // Recupero IP reale
+            // IP e QR
             fetch('https://api.ipify.org?format=json')
-                .then(res => res.json())
-                .then(data => {
-                    document.getElementById('val-IndirizzoIP').innerText = data.ip;
-                }).catch(() => {
-                    document.getElementById('val-IndirizzoIP').innerText = "Bloccato da AdBlock";
-                });
-
-            // Alias e QR Code
-            const fpString = navigator.userAgent + gpu + screen.width;
-            const alias = getAlias(fpString);
+                .then(r => r.json()).then(data => document.getElementById('ip-display').innerText = `IP: ${data.ip}`);
+            
+            const alias = generateAlias(navigator.userAgent + gpu);
             document.getElementById('user-alias').innerText = alias;
-            document.getElementById('qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(window.location.href)}`;
+            document.getElementById('qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(alias)}`;
+
+            // --- COOKIE SENSITIVITY ---
+            // Dato che non possiamo leggere cookie di altri siti, mostriamo cosa un tracker saprebbe di te
+            const cookies = document.cookie.split(';').filter(c => c.length > 0).map(c => c.split('=')[0].trim());
+            const potentialTrackers = [];
             
-            // --- 3. LISTA COOKIE ---
-            const cookies = document.cookie.split(';').filter(c => c.trim().length > 0);
-            const commonTrackers = [];
-            if (window.fbq) commonTrackers.push("Facebook Pixel");
-            if (window.ga || window.gtag) commonTrackers.push("Google Analytics");
+            // Analisi dei "segnali" nel DOM
+            if (window.chrome) potentialTrackers.push("GOOGLE_ECOSYSTEM");
+            if (navigator.share) potentialTrackers.push("MOBILE_USER_SIGNATURE");
+            if (Intl.DateTimeFormat().resolvedOptions().timeZone) potentialTrackers.push("LOCATION_ZONE_LEAK");
             
-            const cookieNames = cookies.map(c => c.split('=')[0].trim());
-            const totalTraces = [...commonTrackers, ...cookieNames];
-            
-            document.getElementById('cookie-list').innerText = totalTraces.length > 0 
-                ? totalTraces.join(', ') 
-                : "Nessun cookie locale o tracker attivo rilevato.";
+            const allTraces = [...cookies, ...potentialTrackers];
+            document.getElementById('cookie-list').innerHTML = allTraces.length > 0 
+                ? allTraces.map(t => `<span class="tag">${t}</span>`).join(", ")
+                : "NESSUNA TRACCIA LOCALE IDENTIFICATA. SEI UN FANTASMA.";
         }
 
-        buildReport();
+        probe();
     })();
 </script>
 

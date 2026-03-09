@@ -3,135 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Checker Pro</title>
+    <title>Browser Fingerprint Monitor</title>
     <style>
-        :root { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --accent: #38bdf8; }
-        body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .container { max-width: 800px; width: 100%; }
-        .card { background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px #000; margin-bottom: 20px; }
-        h1 { color: var(--accent); font-size: 1.5rem; margin-top: 0; }
-        .identity { font-size: 1.2rem; font-weight: bold; color: var(--accent); border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 15px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
-        .data-point { font-size: 0.85rem; }
-        .label { color: #94a3b8; display: block; margin-bottom: 2px; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.5px; }
-        .value { word-break: break-all; font-family: monospace; }
-        .cookie-footer { border-top: 1px solid #334155; padding-top: 15px; font-size: 0.8rem; color: #cbd5e1; }
-        .tag { background: #334155; padding: 2px 6px; border-radius: 4px; margin-right: 5px; display: inline-block; margin-bottom: 5px; }
+        :root { --bg: #0a0a0a; --card: #161616; --text: #e0e0e0; --accent: #00ff41; --border: #333; }
+        body { font-family: 'Courier New', monospace; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; margin-bottom: 20px; border-bottom: 2px solid var(--accent); padding-bottom: 20px; }
+        .alias-box h1 { font-size: 1.2rem; margin: 0; color: var(--accent); }
+        .alias-name { font-size: 2rem; font-weight: bold; }
+        .qr-code img { background: white; padding: 5px; border-radius: 4px; width: 120px; }
+
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background: var(--card); }
+        th, td { text-align: left; padding: 12px; border: 1px solid var(--border); font-size: 0.9rem; }
+        th { background: #222; color: var(--accent); text-transform: uppercase; width: 30%; }
+        tr:hover { background: #1d1d1d; }
+
+        .footer { background: var(--card); padding: 15px; border-left: 4px solid var(--accent); font-size: 0.85rem; }
+        .cookie-list { color: var(--accent); word-break: break-all; margin-top: 10px; display: block; }
+        
+        @media (max-width: 600px) {
+            th, td { display: block; width: 100%; border: none; }
+            th { border-top: 1px solid var(--border); padding-top: 20px; }
+            .header { text-align: center; justify-content: center; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="card">
-        <h1>Identità Digitale Rilevata</h1>
-        <div id="user-alias" class="identity">Generazione alias...</div>
-        
-        <div class="grid" id="privacy-data">
-            </div>
+    <div class="header">
+        <div class="alias-box">
+            <h1>IL TUO ID BROWSER:</h1>
+            <div id="user-alias" class="alias-name">Analisi...</div>
+        </div>
+        <div class="qr-code">
+            <img id="qr-img" src="" alt="QR Code">
+        </div>
     </div>
 
-    <div class="card">
-        <div class="cookie-footer">
-            <strong>Tracce di navigazione e Tracker rilevati:</strong><br><br>
-            <div id="cookie-list">Analisi dei cookie e dei servizi attivi...</div>
-        </div>
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>Parametro</th>
+                <th>Dato Rilevato</th>
+            </tr>
+        </thead>
+        <tbody id="data-body">
+            </tbody>
+    </table>
+
+    <div class="footer">
+        <strong>Cookie e Tracciatori Identificati:</strong>
+        <span id="cookie-list" class="cookie-list">Scansione in corso...</span>
     </div>
 </div>
 
 <script>
     (function() {
-        // --- 1. MECCANISMO DI ASSEGNAZIONE NOMI (HASH-BASED) ---
-        function generateIdentity(fingerprint) {
-            const adjectives = ["Rapido", "Siderale", "Etereo", "Furtivo", "Criptico", "Vigile", "Arguto"];
-            const nouns = ["Leone", "Codice", "Nervo", "Falcon", "Bit", "Proxy", "Nexus"];
+        // --- 1. GENERAZIONE ALIAS UNICO ---
+        function getAlias(fp) {
+            const adj = ["Alpha", "Cyber", "Ghost", "Neon", "Shadow", "Quantum", "Void"];
+            const noun = ["Raptor", "Node", "Protocol", "Matrix", "Hydra", "Sentinel", "Core"];
             let hash = 0;
-            for (let i = 0; i < fingerprint.length; i++) {
-                hash = ((hash << 5) - hash) + fingerprint.charCodeAt(i);
-                hash |= 0;
-            }
-            const absHash = Math.abs(hash);
-            const adj = adjectives[absHash % adjectives.length];
-            const noun = nouns[(absHash >> 2) % nouns.length];
-            const num = absHash % 100;
-            return `${adj}-${noun}-${num}`;
+            for (let i = 0; i < fp.length; i++) { hash = ((hash << 5) - hash) + fp.charCodeAt(i); hash |= 0; }
+            const index = Math.abs(hash);
+            return `${adj[index % adj.length]}-${noun[(index >> 2) % noun.length]}-${index % 1000}`;
         }
 
-        // --- 2. RACCOLTA DATI ESTESA ---
-        async function collectData() {
+        // --- 2. RACCOLTA DATI ---
+        async function buildReport() {
             const gl = document.createElement('canvas').getContext('webgl');
             const debugInfo = gl ? gl.getExtension('WEBGL_debug_renderer_info') : null;
+            const gpu = debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : "N/D";
             
-            const data = {
+            const report = {
+                "Indirizzo IP": "Caricamento...",
                 "User Agent": navigator.userAgent,
-                "Risoluzione": `${screen.width}x${screen.height} (${window.devicePixelRatio}x)`,
-                "Lingua": navigator.language,
-                "Piattaforma": navigator.platform,
+                "Sistema Operativo": navigator.platform,
+                "Risoluzione Schermo": `${screen.width}x${screen.height}`,
+                "Lingua Browser": navigator.language,
                 "Core CPU": navigator.hardwareConcurrency || "N/D",
-                "RAM stimata": navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "N/D",
-                "Timezone": Intm.DateTimeFormat().resolvedOptions().timeZone,
-                "Touch Support": ('ontouchstart' in window) ? "Sì" : "No",
-                "Do Not Track": navigator.doNotTrack === "1" ? "Attivo" : "Non attivo",
-                "GPU": debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : "N/D",
-                "Cookie Abilitati": navigator.cookieEnabled ? "Sì" : "No"
+                "Memoria RAM (stima)": navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "N/D",
+                "GPU": gpu,
+                "Fuso Orario": Intl.DateTimeFormat().resolvedOptions().timeZone,
+                "Cookie Abilitati": navigator.cookieEnabled ? "Sì" : "No",
+                "Do Not Track": navigator.doNotTrack === "1" ? "Attivo" : "Disattivo",
+                "Touch Screen": ('ontouchstart' in window) ? "Sì" : "No"
             };
 
-            // Canvas Fingerprinting (sommario)
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            ctx.fillText("PrivacyCheck", 10, 10);
-            const canvasHash = canvas.toDataURL().substring(30, 50);
-            data["Canvas ID"] = canvasHash;
-
-            return data;
-        }
-
-        // --- 3. ANALISI COOKIE E TRACKER ---
-        function analyzeTrackers() {
-            const cookies = document.cookie.split(';');
-            const found = [];
-            
-            // Simulazione rilevamento tramite check di oggetti globali comuni (History Sniffing moderna)
-            const detectors = {
-                "Facebook/Meta": () => window.fbq || window.FB,
-                "Google Analytics": () => window.ga || window.gtag,
-                "Google Ads": () => window.google_ad_client,
-                "Twitter/X": () => window.twttr,
-                "LinkedIn": () => window.lintrk,
-                "TikTok": () => window.ttq
-            };
-
-            for (let [name, check] of Object.entries(detectors)) {
-                if (check()) found.push(name);
-            }
-
-            // Aggiunta cookie locali
-            if (cookies[0] !== "") {
-                cookies.forEach(c => found.push(`Cookie: ${c.split('=')[0].trim()}`));
-            }
-
-            if (found.length === 0) return "Nessun cookie di terze parti leggibile direttamente. Il browser sta proteggendo la tua cronologia.";
-            return found.map(f => `<span class="tag">${f}</span>`).join(", ");
-        }
-
-        // --- RENDER ---
-        async function init() {
-            const data = await collectData();
-            const fingerprintString = data["User Agent"] + data["Risoluzione"] + data["GPU"];
-            
-            document.getElementById('user-alias').innerText = generateIdentity(fingerprintString);
-            
-            const grid = document.getElementById('privacy-data');
-            grid.innerHTML = Object.entries(data).map(([label, value]) => `
-                <div class="data-point">
-                    <span class="label">${label}</span>
-                    <span class="value">${value}</span>
-                </div>
+            // Inserimento dati nella tabella
+            const tbody = document.getElementById('data-body');
+            tbody.innerHTML = Object.entries(report).map(([k, v]) => `
+                <tr>
+                    <th>${k}</th>
+                    <td id="val-${k.replace(/\s+/g, '')}">${v}</td>
+                </tr>
             `).join('');
 
-            document.getElementById('cookie-list').innerHTML = analyzeTrackers();
+            // Recupero IP reale
+            fetch('https://api.ipify.org?format=json')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('val-IndirizzoIP').innerText = data.ip;
+                }).catch(() => {
+                    document.getElementById('val-IndirizzoIP').innerText = "Bloccato da AdBlock";
+                });
+
+            // Alias e QR Code
+            const fpString = navigator.userAgent + gpu + screen.width;
+            const alias = getAlias(fpString);
+            document.getElementById('user-alias').innerText = alias;
+            document.getElementById('qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(window.location.href)}`;
+            
+            // --- 3. LISTA COOKIE ---
+            const cookies = document.cookie.split(';').filter(c => c.trim().length > 0);
+            const commonTrackers = [];
+            if (window.fbq) commonTrackers.push("Facebook Pixel");
+            if (window.ga || window.gtag) commonTrackers.push("Google Analytics");
+            
+            const cookieNames = cookies.map(c => c.split('=')[0].trim());
+            const totalTraces = [...commonTrackers, ...cookieNames];
+            
+            document.getElementById('cookie-list').innerText = totalTraces.length > 0 
+                ? totalTraces.join(', ') 
+                : "Nessun cookie locale o tracker attivo rilevato.";
         }
 
-        init();
+        buildReport();
     })();
 </script>
 
